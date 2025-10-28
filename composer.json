@@ -37,7 +37,10 @@
             "App\\": "app/",
             "Modules\\": "Modules/",
             "Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+          "app/Helpers/bc/helpers_bc.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

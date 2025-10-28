@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Core\Controllers\Helpers;
+namespace Modules\Core\Helpers;
 
 class PhpmailerHelper
 {
