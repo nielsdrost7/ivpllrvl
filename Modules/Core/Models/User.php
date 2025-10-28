@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Core\Models;
 
-use App\Company;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
