@@ -17,6 +17,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use Notifiable;
 
+    protected $primaryKey = 'user_id';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -24,6 +26,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
      */
     protected $fillable = [
         'name', 'email', 'password',
+        'user_name', 'user_email', 'user_password', 'user_active', 
+        'user_type', 'user_company', 'user_language', 'user_psalt',
+        'user_passwordreset_token',
     ];
 
     /**
@@ -32,7 +37,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'user_password', 'user_psalt',
     ];
 
     public function companies(): BelongsToMany
