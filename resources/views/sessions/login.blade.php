@@ -10,7 +10,6 @@
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
 
     @filamentStyles
-    @vite(['resources/assets/sass/app.scss', 'resources/assets/js/app.js'])
 </head>
 
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
