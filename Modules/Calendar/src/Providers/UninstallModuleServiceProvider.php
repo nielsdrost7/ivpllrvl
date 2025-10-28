@@ -14,8 +14,6 @@ class UninstallModuleServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -26,12 +24,8 @@ class UninstallModuleServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     private function booted(): void
     {
@@ -40,7 +34,7 @@ class UninstallModuleServiceProvider extends ServiceProvider
 
     private function dropSchema(): void
     {
-        //If you want to rollback your module migration
+        // If you want to rollback your module migration
         // uncomment bellow statement
 
         //        \Artisan::call('module:migrate:rollback', ['alias' => $this->moduleAlias]);

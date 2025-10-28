@@ -3,11 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Company;
+use Filament\Http\Middleware\ApplyTenantScopes;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Http\Middleware\ApplyTenantScopes;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;

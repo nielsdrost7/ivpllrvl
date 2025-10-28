@@ -6,10 +6,9 @@ use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Collection;
 use Modules\Core\Models\User;
 
-class Company extends Model implements Tenant, HasName
+class Company extends Model implements HasName, Tenant
 {
     protected $fillable = [
         'name',

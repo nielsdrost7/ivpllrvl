@@ -17,8 +17,6 @@ class MyModulesController extends Controller
 
     /**
      * MyModulesController constructor.
-     *
-     * @param MyModuleRepository $myModuleRepository
      */
     public function __construct(MyModuleRepository $myModuleRepository)
     {
@@ -43,8 +41,6 @@ class MyModulesController extends Controller
 
     /**
      * POST /my-modules.
-     *
-     * @param Request $request
      */
     public function store(Request $request): void
     {
@@ -53,8 +49,6 @@ class MyModulesController extends Controller
 
     /**
      * GET /my-modules/{id}.
-     *
-     * @param $id
      */
     public function show($id): void
     {
@@ -63,8 +57,6 @@ class MyModulesController extends Controller
 
     /**
      * GET /my-modules/{id}/edit.
-     *
-     * @param $id
      */
     public function edit($id): void
     {
@@ -73,9 +65,6 @@ class MyModulesController extends Controller
 
     /**
      * PUT/PATCH /my-modules/{id}.
-     *
-     * @param         $id
-     * @param Request $request
      */
     public function update($id, Request $request): void
     {
@@ -84,8 +73,6 @@ class MyModulesController extends Controller
 
     /**
      * DELETE /my-modules/{id}.
-     *
-     * @param $id
      */
     public function destroy($id): void
     {

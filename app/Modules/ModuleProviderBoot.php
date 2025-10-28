@@ -12,12 +12,12 @@ trait ModuleProviderBoot
         $moduleName = explode('\\', self::class)[2];
 
         // Use __DIR__ and module name to generate the correct path
-        $dir = __DIR__ . '/' . $moduleName;
+        $dir = __DIR__.'/'.$moduleName;
 
         // Register our view files
-        view()->addLocation($dir . '/Views');
+        view()->addLocation($dir.'/Views');
 
         // Bring in the routes
-        require $dir . '/routes.php';
+        require $dir.'/routes.php';
     }
 }

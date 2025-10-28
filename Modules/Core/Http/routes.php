@@ -2,8 +2,7 @@
 
 use Modules\Core\Http\Controllers\SessionsController;
 
-Route::group(['middleware' => 'web', 'prefix' => 'core', 'namespace' => 'Modules\Core\Http\Controllers'], function()
-{
+Route::group(['middleware' => 'web', 'prefix' => 'core', 'namespace' => 'Modules\Core\Http\Controllers'], function () {
     Route::get('/', 'CoreController@index');
 });
 

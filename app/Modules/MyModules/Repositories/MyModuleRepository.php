@@ -10,10 +10,6 @@ use Modules\Repositories\EloquentRepositoryAbstract;
 
 class MyModuleRepository extends EloquentRepositoryAbstract
 {
-    /**
-     * @param MyModule          $model
-     * @param MyModuleValidator $validator
-     */
     public function __construct(MyModule $model, MyModuleValidator $validator)
     {
         $this->model = $model;

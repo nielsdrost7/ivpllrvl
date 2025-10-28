@@ -12,8 +12,6 @@ class BootstrapModuleServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -24,12 +22,8 @@ class BootstrapModuleServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     private function booted(): void
     {
