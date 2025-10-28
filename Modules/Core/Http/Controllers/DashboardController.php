@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Core\Http\Controllers;
 
 use Illuminate\View\View;
 use Modules\Core\Models\Setting;
@@ -9,7 +9,7 @@ use Modules\Projects\Models\Project;
 use Modules\Projects\Models\Task;
 use Modules\Quotes\Models\Quote;
 
-class DashboardController extends Controller
+class DashboardController extends CoreController
 {
     private const MIN_STATUS_ID = 1;
 
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        return view('dashboard.index', [
+        return view('core::dashboard.index', [
             'invoice_status_totals' => $invoiceStatusTotals,
             'quote_status_totals' => $quoteStatusTotals,
             'invoices' => $invoices,

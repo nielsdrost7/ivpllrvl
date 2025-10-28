@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Modules\Core\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -43,7 +43,7 @@ class DashboardControllerTest extends TestCase
 
         // Assert: dashboard is displayed
         $response->assertStatus(200);
-        $response->assertViewIs('dashboard.index');
+        $response->assertViewIs('core::dashboard.index');
         $response->assertViewHas('invoice_status_totals');
         $response->assertViewHas('quote_status_totals');
     }
