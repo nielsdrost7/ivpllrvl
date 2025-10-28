@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
-use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Route;
+use Modules\Clients\Http\Controllers\ClientsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,12 +14,6 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group([], function () {
+    Route::resource('clients', ClientsController::class)->names('clients');
 });
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-
-Route::get('/guest', function () {
-    return 'Guest Area';
-})->name('guest');

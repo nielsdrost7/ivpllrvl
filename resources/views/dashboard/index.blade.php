@@ -1,23 +1,28 @@
-@extends('layouts.master')
-
-@section('content')
-
-    @include('layouts._alerts')
-
-    <section class="content-header">
-        <h3 class="mb-3">Dashboard</h3>
-    </section>
-
-    <div class="row">
-
-
-                <div class="col-md-6 col-sm-12">
-                    temp
-                </div>
-                <div class="col-md-6 col-sm-12">
-                    temp
-                </div>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Dashboard</h1>
+        
+        <!-- Invoice Overview -->
+        <div class="invoice-overview">
+            <h2>Invoice Overview</h2>
+            <!-- Invoice status totals, invoices, etc. are available in the view -->
+        </div>
+        
+        <!-- Quote Overview -->
+        <div class="quote-overview">
+            <h2>Quote Overview</h2>
+            <!-- Quote status totals, quotes, etc. are available in the view -->
+        </div>
+        
+        <!-- Projects and Tasks -->
+        <div class="projects-tasks">
+            <!-- Projects and tasks are available in the view -->
+        </div>
     </div>
-
-@stop
+</body>
+</html>

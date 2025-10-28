@@ -5,5 +5,6 @@
     "Products": true,
     "Projects": true,
     "Quotes": true,
-    "Core": true
+    "Core": true,
+    "Clients": true
 }
