@@ -4,11 +4,14 @@ namespace Modules\Core\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class CoreServiceProvider extends ServiceProvider
 {
+    use PathNamespace;
+
     protected string $name = 'Core';
 
     protected string $nameLower = 'core';
