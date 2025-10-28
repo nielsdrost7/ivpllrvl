@@ -5,7 +5,7 @@ namespace App;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\Tenant;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 class Company extends Model implements Tenant, HasName
@@ -23,12 +23,12 @@ class Company extends Model implements Tenant, HasName
         'is_active' => 'boolean',
     ];
 
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
-    public function members(): HasMany
+    public function members(): BelongsToMany
     {
         return $this->users();
     }

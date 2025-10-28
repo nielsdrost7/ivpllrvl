@@ -6,7 +6,7 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -23,7 +23,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'company_id',
+        'name', 'email', 'password',
     ];
 
     /**
@@ -35,9 +35,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'password', 'remember_token',
     ];
 
-    public function company(): BelongsTo
+    public function companies(): BelongsToMany
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsToMany(Company::class)->withTimestamps();
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -47,11 +47,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function getTenants(Panel $panel): Collection
     {
-        return $this->company ? collect([$this->company]) : collect();
+        return $this->companies;
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->company_id === $tenant->id;
+        return $this->companies->contains($tenant);
     }
 }
