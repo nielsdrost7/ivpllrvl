@@ -1,0 +1,8 @@
+{
+    "Crm": true,
+    "Expenses": true,
+    "Invoices": true,
+    "Products": true,
+    "Projects": true,
+    "Quotes": true
+}
