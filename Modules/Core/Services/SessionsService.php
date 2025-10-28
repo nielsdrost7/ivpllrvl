@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Core\Services;
 
-use App\User;
+use Modules\Core\Models\User;
 
 class SessionsService extends BaseService
 {
