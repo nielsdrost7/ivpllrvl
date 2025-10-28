@@ -1,133 +1,36 @@
 <?php
 
-namespace Modules\Core\src\Controllers;
+namespace Modules\Core\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\View\View;
-use Modules\Core\src\Models\Setting;
-use Modules\Invoices\Models\Invoice;
-use Modules\Projects\Models\Project;
-use Modules\Projects\Models\Task;
-use Modules\Quotes\Models\Quote;
+use AllowDynamicProperties;
+use Modules\Invoices\Services\InvoiceAmountsService;
+use Modules\Invoices\Services\InvoicesService;
+use Modules\Projects\app\Services\TasksService;
+use Modules\Projects\Services\ProjectsService;
+use Modules\Quotes\Services\QuoteAmountsService;
+use Modules\Quotes\Services\QuotesService;
 
-class DashboardController extends Controller
+#[AllowDynamicProperties]
+class DashboardController extends AdminController
 {
-    private const MIN_STATUS_ID = 1;
-
-    private const MAX_STATUS_ID = 4;
-
     /**
-     * Display the dashboard with overview data.
+     * Prepares data required by the admin dashboard and renders the dashboard view.
+     *
+     * The view data includes:
+     * - `invoice_status_totals`, `quote_status_totals` — aggregated amounts by status for the configured overview periods.
+     * - `invoice_status_period`, `quote_status_period` — overview period identifiers with `-` replaced by `_`.
+     * - `invoices`, `quotes` — latest 10 invoices and quotes.
+     * - `invoice_statuses`, `quote_statuses` — available invoice and quote statuses.
+     * - `overdue_invoices` — invoices marked as overdue.
+     * - `projects`, `tasks`, `task_statuses` — latest projects, latest tasks, and task statuses.
+     *
+     * @return string the rendered dashboard view content
      */
-    public function index(): View
+    public function index()
     {
-        // Get invoice overview period setting
-        $invoiceOverviewPeriod = Setting::where('setting_key', 'invoice_overview_period')
-            ->first()?->setting_value ?? 'all-time';
+        $quote_overview_period   = get_setting('quote_overview_period');
+        $invoice_overview_period = get_setting('invoice_overview_period');
 
-        // Get quote overview period setting
-        $quoteOverviewPeriod = Setting::where('setting_key', 'quote_overview_period')
-            ->first()?->setting_value ?? 'all-time';
-
-        // Get invoice status totals
-        $invoiceStatusTotals = $this->getInvoiceStatusTotals();
-
-        // Get quote status totals
-        $quoteStatusTotals = $this->getQuoteStatusTotals();
-
-        // Get recent invoices (limited to 10)
-        $invoices = Invoice::with('client')
-            ->latest('invoice_date_created')
-            ->limit(10)
-            ->get();
-
-        // Get recent quotes (limited to 10)
-        $quotes = Quote::with('client')
-            ->latest('quote_date_created')
-            ->limit(10)
-            ->get();
-
-        // Get overdue invoices
-        $overdueInvoices = Invoice::with('client')
-            ->where('invoice_status_id', 2)
-            ->where('invoice_date_due', '<', now())
-            ->get();
-
-        // Get latest projects
-        $projects = Project::with('client')
-            ->latest('created_at')
-            ->limit(5)
-            ->get();
-
-        // Get latest tasks
-        $tasks = Task::with('project')
-            ->latest('created_at')
-            ->limit(10)
-            ->get();
-
-        return view('core::dashboard.index', [
-            'invoice_status_totals' => $invoiceStatusTotals,
-            'quote_status_totals'   => $quoteStatusTotals,
-            'invoices'              => $invoices,
-            'quotes'                => $quotes,
-            'overdue_invoices'      => $overdueInvoices,
-            'projects'              => $projects,
-            'tasks'                 => $tasks,
-            'invoice_statuses'      => config('statuses.invoice'),
-            'quote_statuses'        => config('statuses.quote'),
-            'task_statuses'         => config('statuses.task'),
-            'invoice_status_period' => str_replace('-', '_', $invoiceOverviewPeriod),
-            'quote_status_period'   => str_replace('-', '_', $quoteOverviewPeriod),
-        ]);
-    }
-
-    /**
-     * Get invoice status totals.
-     */
-    private function getInvoiceStatusTotals(): array
-    {
-        $totals   = [];
-        $statuses = config('statuses.invoice');
-
-        for ($statusId = self::MIN_STATUS_ID; $statusId <= self::MAX_STATUS_ID; $statusId++) {
-            $count    = Invoice::where('invoice_status_id', $statusId)->count();
-            $sumTotal = Invoice::where('invoice_status_id', $statusId)->sum('invoice_total');
-
-            $totals[] = [
-                'status_id' => $statusId,
-                'label'     => $statuses[$statusId]['label'] ?? 'Unknown',
-                'count'     => $count,
-                'sum_total' => $sumTotal,
-                'href'      => "invoices/status/{$statusId}",
-                'class'     => $statuses[$statusId]['class'] ?? '',
-            ];
-        }
-
-        return $totals;
-    }
-
-    /**
-     * Get quote status totals.
-     */
-    private function getQuoteStatusTotals(): array
-    {
-        $totals   = [];
-        $statuses = config('statuses.quote');
-
-        for ($statusId = self::MIN_STATUS_ID; $statusId <= self::MAX_STATUS_ID; $statusId++) {
-            $count    = Quote::query()->where('quote_status_id', $statusId)->count();
-            $sumTotal = Quote::query()->where('quote_status_id', $statusId)->sum('quote_total');
-
-            $totals[] = [
-                'status_id' => $statusId,
-                'label'     => $statuses[$statusId]['label'] ?? 'Unknown',
-                'count'     => $count,
-                'sum_total' => $sumTotal,
-                'href'      => "quotes/status/{$statusId}",
-                'class'     => $statuses[$statusId]['class'] ?? '',
-            ];
-        }
-
-        return $totals;
+        return view('dashboard.index', ['invoice_status_totals' => (new InvoiceAmountsService())->getStatusTotals($invoice_overview_period), 'quote_status_totals' => (new QuoteAmountsService())->getStatusTotals($quote_overview_period), 'invoice_status_period' => str_replace('-', '_', $invoice_overview_period), 'quote_status_period' => str_replace('-', '_', $quote_overview_period), 'invoices' => (new InvoicesService())->limit(10)->get()->result(), 'quotes' => (new QuotesService())->limit(10)->get()->result(), 'invoice_statuses' => (new InvoicesService())->statuses(), 'quote_statuses' => (new QuotesService())->statuses(), 'overdue_invoices' => (new InvoicesService())->isOverdue()->get()->result(), 'projects' => (new ProjectsService())->getLatest()->get()->result(), 'tasks' => (new TasksService())->getLatest()->get()->result(), 'task_statuses' => (new TasksService())->statuses()]);
     }
 }

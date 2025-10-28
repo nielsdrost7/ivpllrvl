@@ -1,85 +1,79 @@
 <?php
 
-namespace Modules\Core\src\Models;
+namespace Modules\Core\Models;
 
-use Database\Factories\UserFactory;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasTenants;
-use Filament\Panel;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'email', 'password',
-        'user_name', 'user_email', 'user_password', 'user_active',
-        'user_type', 'user_company', 'user_language', 'user_psalt',
-        'user_passwordreset_token',
+    public $timestamps = false;
+
+    protected $table = 'ip_users';
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password'          => 'hashed',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+    protected $guarded = [];
+
     protected $hidden = [
-        'password', 'remember_token', 'user_password', 'user_psalt',
+        'password',
+        'remember_token',
     ];
 
-    /**
-     * Get user_id attribute (alias for id for backward compatibility).
-     */
-    public function getUserIdAttribute()
-    {
-        return $this->id;
-    }
+    #region Static Methods
+    /*
+    |--------------------------------------------------------------------------
+    | Static Methods
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Set user_id attribute (alias for id for backward compatibility).
-     */
-    public function setUserIdAttribute($value)
-    {
-        $this->attributes['id'] = $value;
-    }
+    #endregion
+    #region Relationships
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
-    public function companies(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class)->withTimestamps();
-    }
+    #endregion
+    #region Accessors
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return true; // For now, allow all users
-    }
+    #endregion
+    #region Mutators
+    /*
+    |--------------------------------------------------------------------------
+    | Mutators
+    |--------------------------------------------------------------------------
+    */
 
-    public function getTenants(Panel $panel): Collection
-    {
-        return $this->companies;
-    }
+    #endregion
+    #region Scopes
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
 
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return $this->companies->contains($tenant);
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory(): UserFactory
-    {
-        return UserFactory::new();
-    }
+    #endregion
+    #region Factory
+    /*
+    |--------------------------------------------------------------------------
+    | Factory
+    |--------------------------------------------------------------------------
+    */
+    #endregion
 }

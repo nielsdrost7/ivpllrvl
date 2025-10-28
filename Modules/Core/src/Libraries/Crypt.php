@@ -1,33 +1,63 @@
 <?php
 
-namespace Modules\Core\src\Libraries;
+namespace Modules\Core\Libraries;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class Crypt
 {
-    /**
-     * Generate a random salt for password hashing.
-     */
     public function salt(): string
     {
-        return Str::random(32);
+        return mb_substr(sha1(mt_rand()), 0, 22);
     }
 
     /**
-     * Generate a hashed password using the provided salt.
+     * @param string $password
      */
-    public function generate_password(string $password, string $salt): string
+    public function generate_password($password, string $salt): string
     {
-        return Hash::make($password . $salt);
+        return crypt($password, '$2a$10$' . $salt);
     }
 
     /**
-     * Check if the provided password matches the hashed password.
+     * @param string $hash
+     * @param string $password
      */
-    public function check_password(string $hash, string $password): bool
+    public function check_password($hash, $password): bool
     {
-        return Hash::check($password, $hash);
+        $new_hash = crypt($password, $hash);
+
+        return $hash == $new_hash;
+    }
+
+    /**
+     * @param string $data
+     */
+    public function encode($data): string
+    {
+        $key = getenv('ENCRYPTION_KEY');
+        if (preg_match('/^base64:(.*)$/', $key, $matches)) {
+            $key = base64_decode($matches[1]);
+        }
+
+        return Cryptor::Encrypt($data, $key);
+    }
+
+    /**
+     * @param string $data
+     */
+    public function decode($data): string
+    {
+        if (empty($data)) {
+            return '';
+        }
+
+        $key = getenv('ENCRYPTION_KEY');
+        if (preg_match('/^base64:(.*)$/', $key, $matches)) {
+            $key = base64_decode($matches[1]);
+        }
+
+        return Cryptor::Decrypt($data, $key);
     }
 }

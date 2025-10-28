@@ -13,9 +13,6 @@ import 'moment';
 import 'bootstrap-notify';
 import 'jquery-slimscroll';
 
-// Import SASS/SCSS files
-import '../sass/app.scss';
-
 // Initialize jQuery on window for legacy code
 window.$ = window.jQuery = $;
 

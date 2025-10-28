@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected string $name = 'Core';
+    protected string $name = 'Expenses';
 
     /**
      * Called before routes are registered.

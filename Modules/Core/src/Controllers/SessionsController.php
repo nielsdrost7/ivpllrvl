@@ -1,279 +1,310 @@
 <?php
 
-namespace Modules\Core\src\Controllers;
+namespace Modules\Core\Controllers;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Illuminate\View\View;
-use Modules\Core\src\Models\User;
-use Modules\Core\src\Services\SessionsService;
+use AllowDynamicProperties;
+use App\Helpers\MailerHelper;
+use Illuminate\Support\Facades\Log;
+use Modules\Sessions\Controllers\DateTime;
 
-class SessionsController extends Controller
+use function Modules\Sessions\Controllers\phpmail_send;
+
+use Modules\Sessions\Controllers\SessionsService;
+
+use function Modules\Sessions\Controllers\site_url;
+
+use Modules\Sessions\Controllers\UsersService;
+
+#[AllowDynamicProperties]
+class SessionsController extends BaseController
 {
-    protected SessionsService $sessionsService;
-
-    public function __construct(SessionsService $sessionsService)
+    /**
+     * @originalName index
+     *
+     * @originalFile SessionsController.php
+     */
+    public function index()
     {
-        $this->sessionsService = $sessionsService;
+        redirect()->route('sessions/login');
     }
 
     /**
-     * Redirect index to login page.
+     * Handle display and processing of the login form.
+     *
+     * Processes submitted credentials, sets flash messages for errors, redirects
+     * on successful authentication according to user type, and returns the login
+     * view when rendering the form.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View a redirect response after form processing or the login view when displaying the form
      */
-    public function index(): RedirectResponse
+    public function login()
     {
-        return redirect()->route('sessions.login');
-    }
-
-    /**
-     * Display the login page.
-     */
-    public function login(Request $request): View|RedirectResponse
-    {
-        // Check if token is provided for password reset
-        if ($request->has('token')) {
-            $token = $request->input('token');
-
-            // Validate token contains only alphanumeric and underscores
-            if ( ! preg_match('/^[a-zA-Z0-9_]+$/', $token)) {
-                return redirect('/');
-            }
-
-            $user = User::where('user_passwordreset_token', $token)->first();
-
-            if ( ! $user) {
-                return redirect()->route('sessions.passwordreset')
-                    ->with('alert_error', trans('core::messages.loginalert_invalid_token'));
-            }
-
-            return view('core::session_new_password', [
-                'token'   => $token,
-                'user_id' => $user->user_id,
-            ]);
-        }
-
-        return view('core::session_login', [
-            'login_logo' => 'logo.png',
-        ]);
-    }
-
-    /**
-     * Authenticate user credentials.
-     */
-    public function authenticate(Request $request): RedirectResponse
-    {
-        // This is just for compatibility with routes, redirect to login
-        return redirect()->route('sessions.login');
-    }
-
-    /**
-     * Handle login form submission.
-     */
-    public function loginPost(Request $request): RedirectResponse
-    {
-        if ( ! $request->has('btn_login')) {
-            return redirect()->route('sessions.login');
-        }
-
-        $email    = $request->input('email');
-        $password = $request->input('password');
-
-        // Check for login throttling
-        $loginLog = DB::table('ip_login_log')
-            ->where('login_name', $email)
-            ->first();
-
-        if ($loginLog) {
-            // Check if 12 hours have passed
-            $twelveHoursAgo = now()->subHours(12);
-            $logTimestamp   = \Carbon\Carbon::parse($loginLog->log_create_timestamp);
-
-            if ($logTimestamp->lt($twelveHoursAgo)) {
-                // Delete old log entry
-                DB::table('ip_login_log')
-                    ->where('login_name', $email)
-                    ->delete();
-            } elseif ($loginLog->log_count >= 10) {
-                // Account is locked
-                return redirect()->route('sessions.login')
-                    ->with('alert_error', trans('core::messages.loginalert_account_locked'));
+        $view_data = ['login_logo' => get_setting('login_logo')];
+        if ($this->input->post('btn_login')) {
+            $this->db->where('user_email', $this->input->post('email'));
+            $query = $this->db->get('ip_users');
+            $user  = $query->row();
+            // Check if the user exists
+            if (empty($user)) {
+                $this->session->set_flashdata('alert_error', trans('loginalert_user_not_found'));
+                redirect()->route('sessions/login');
+            } elseif ($user->user_active == 0) {
+                // Check if the user is marked as active (not implemented: Todo?)
+                $this->session->set_flashdata('alert_error', trans('loginalert_user_inactive'));
+                redirect()->route('sessions/login');
+            } elseif ($this->authenticate($this->input->post('email'), $this->input->post('password'))) {
+                if ($this->session->userdata('user_type') == 1) {
+                    redirect()->route('dashboard');
+                } elseif ($this->session->userdata('user_type') == 2) {
+                    redirect()->route('guest');
+                }
+            } else {
+                $this->session->set_flashdata('alert_error', trans('loginalert_credentials_incorrect'));
+                redirect()->route('sessions/login');
             }
         }
 
-        // Find user
-        $user = User::where('user_email', $email)->first();
+        return view('session_login', $view_data);
+    }
 
-        if ( ! $user) {
-            $this->incrementLoginFailures($email);
+    /**
+     * Validate user credentials while enforcing login-attempt throttling.
+     *
+     * Attempts authentication only if the recorded failed attempts for the given
+     * email are below the configured threshold; on success the failed-attempt
+     * log for the email is cleared, on failure a failed-attempt is recorded.
+     *
+     * @param string $email_address the user's email address used to identify the account
+     * @param string $password      the plaintext password to verify for the account
+     *
+     * @return bool `true` if authentication succeeds and the failure log is reset, `false` otherwise
+     */
+    public function authenticate($email_address, $password): bool
+    {
+        //check if user is banned
+        $login_log = $this->loginLogCheck($email_address);
+        if (empty($login_log) || $login_log->log_count < 10) {
+            if ((new SessionsService())->auth($email_address, $password)) {
+                $this->loginLogReset($email_address);
 
-            return redirect()->route('sessions.login')
-                ->with('alert_error', trans('core::messages.loginalert_user_not_found'));
-        }
-
-        // Check if user is active
-        if ($user->user_active != 1) {
-            $this->incrementLoginFailures($email);
-
-            return redirect()->route('sessions.login')
-                ->with('alert_error', trans('core::messages.loginalert_user_inactive'));
-        }
-
-        // Attempt authentication
-        if ($this->sessionsService->auth($email, $password)) {
-            // Clear login failures on successful login
-            DB::table('ip_login_log')
-                ->where('login_name', $email)
-                ->delete();
-
-            // Redirect based on user type
-            if ($user->user_type == 2) {
-                return redirect()->route('guest');
+                return true;
             }
-
-            return redirect()->route('dashboard');
+            //track failed attempt
+            $this->loginLogAddfailure($email_address);
         }
 
-        // Authentication failed
-        $this->incrementLoginFailures($email);
-
-        return redirect()->route('sessions.login')
-            ->with('alert_error', trans('core::messages.loginalert_invalid_credentials'));
+        return false;
     }
 
     /**
-     * Log out the authenticated user.
+     * @originalName logout
+     *
+     * @originalFile SessionsController.php
      */
-    public function logout(): RedirectResponse
+    public function logout()
     {
-        session()->flush();
-        auth()->logout();
-
-        return redirect()->route('sessions.login');
+        $this->session->sess_destroy();
+        redirect()->route('sessions/login');
     }
 
     /**
-     * Display password reset page or process reset.
+     * Handle password reset flows: token verification, new-password submission, and reset-request submission.
+     *
+     * Processes three distinct actions depending on input:
+     * - If a token is provided: validate the token, throttle abuse, locate the user, clear login failures, and render the new-password view.
+     * - If the new-password form is submitted: validate input and token, update the user's password, clear the reset token and login failures, and redirect to the login page.
+     * - If the password-reset request form is submitted: validate the email, throttle abuse, generate and store a reset token, send the reset email, and redirect to the login page.
+     *
+     * @param string|null $token the password reset token supplied via the URL, or null when not using a token
+     *
+     * @return mixed a view response for rendering the appropriate password reset page or a redirect response after processing
      */
-    public function passwordreset(Request $request): View|RedirectResponse
+    public function passwordreset($token = null)
     {
-        if ($request->has('btn_new_password')) {
-            return $this->processNewPassword($request);
+        // Check if a token was provided
+        if ($token) {
+            if (preg_match('/[^[:alnum:]\-_]/', $token)) {
+                Log::error('Incoming token is not alphanumeric ' . $token);
+                redirect()->route('/');
+            }
+            //prevent brute force attacks by counting times a token is used
+            $login_log_check = $this->loginLogCheck($token);
+            if ( ! empty($login_log_check) && $login_log_check->log_count > 10) {
+                redirect($_SERVER['HTTP_REFERER']);
+            } else {
+                //the use of a token counts as a failure
+                $this->loginLogAddfailure($token);
+            }
+            $this->db->where('user_passwordreset_token', $token);
+            $user = $this->db->get('ip_users');
+            $user = $user->row();
+            if (empty($user)) {
+                // Redirect back to the login screen with an alert
+                $this->session->set_flashdata('alert_error', trans('wrong_passwordreset_token'));
+                redirect()->route('sessions/passwordreset');
+            } else {
+                //if token is valid, delete the failure attempt from
+                //the login_log table
+                $this->loginLogReset($token);
+            }
+            $formdata = ['token' => $token, 'user_id' => $user->user_id];
+
+            return view('session_new_password', $formdata);
+        }
+        // Check if the form for a new password was used
+        if ($this->input->post('btn_new_password')) {
+            $new_password = $this->input->post('new_password', true);
+            $user_id      = $this->input->post('user_id', true);
+            if (empty($user_id) || empty($new_password)) {
+                $this->session->set_flashdata('alert_error', trans('loginalert_no_password'));
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+            // Check for the reset token
+            $user = (new UsersService())->getById($user_id);
+            if (empty($user)) {
+                $this->session->set_flashdata('alert_error', trans('loginalert_user_not_found'));
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+            if (empty($user->user_passwordreset_token) || $this->input->post('token') !== $user->user_passwordreset_token) {
+                $this->session->set_flashdata('alert_error', trans('loginalert_wrong_auth_code'));
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+            // Call the save_change_password() function from users model
+            (new UsersService())->saveChangePassword($user_id, $new_password);
+            // Update the user and set him active again
+            $db_array = ['user_passwordreset_token' => ''];
+            //delete failed attempts from login_log table
+            $user = $this->db->where('user_id', $user_id)->get('ip_users')->row();
+            $this->loginLogReset($user->user_email);
+            $this->db->where('user_id', $user_id);
+            $this->db->update('ip_users', $db_array);
+            // Redirect back to the login form
+            redirect()->route('sessions/login');
+        }
+        // Check if the password reset form was used
+        if ($this->input->post('btn_reset', true)) {
+            $email = $this->input->post('email', true);
+            if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                Log::error('Incoming email is not a valid email address in passwordreset ' . $email);
+                redirect()->route('/');
+            }
+            if (empty($email)) {
+                $this->session->set_flashdata('alert_error', trans('loginalert_user_not_found'));
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+            //prevent brute force attacks by counting password resets
+            $login_log_check = $this->loginLogCheck($email);
+            if ( ! empty($login_log_check) && $login_log_check->log_count > 10) {
+                redirect($_SERVER['HTTP_REFERER']);
+            } else {
+                //a password recovery attempt counts as failed login
+                $this->loginLogAddfailure($email);
+            }
+            // Test if a user with this email exists
+            if ($recovery_result = $this->db->where('user_email', $email)) {
+                // Create a passwordreset token.
+                $email = $this->input->post('email', true);
+                if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    Log::error('Incoming email is not a valid email address in passwordreset ' . $email);
+                    redirect()->route('/');
+                }
+                //use salt to prevent predictability of the reset token (CVE-2021-29023)
+                $this->load->library('crypt');
+                $token = md5(time() . $email . $this->crypt->salt());
+                // Save the token to the database and set the user to inactive
+                $db_array = ['user_passwordreset_token' => $token];
+                $this->db->where('user_email', $email);
+                $this->db->update('ip_users', $db_array);
+                // Send the email with reset link
+                // Prepare some variables for the email
+                $email_resetlink = site_url('sessions/passwordreset/' . $token);
+                $email_message   = $this->load->view('emails/passwordreset', ['resetlink' => $email_resetlink], true);
+                $email_from      = get_setting('smtp_mail_from');
+                if (empty($email_from)) {
+                    $email_from = 'system@' . preg_replace('/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/', '$1', base_url());
+                }
+                // Mail the invoice with the pre-configured mailer if possible
+                if (MailerHelper::mailerConfigured()) {
+                    $this->load->helper('mailer/phpmailer');
+                    if ( ! phpmail_send($email_from, $email, trans('password_reset'), $email_message)) {
+                        $email_failed = true;
+                    }
+                } else {
+                    $this->load->library('email');
+                    // Set email configuration
+                    $config['mailtype'] = 'html';
+                    $this->email->initialize($config);
+                    // Set the email params
+                    $this->email->from($email_from);
+                    $this->email->to($email);
+                    $this->email->subject(trans('password_reset'));
+                    $this->email->message($email_message);
+                    // Send the reset email
+                    if ( ! $this->email->send()) {
+                        $email_failed = true;
+                        Log::error($this->email->print_debugger());
+                    }
+                }
+                // Redirect back to the login screen with an alert
+                if (isset($email_failed)) {
+                    $this->session->set_flashdata('alert_error', trans('password_reset_failed'));
+                } else {
+                    $this->session->set_flashdata('alert_success', trans('email_successfully_sent'));
+                }
+                redirect()->route('sessions/login');
+            }
         }
 
-        if ($request->has('btn_reset')) {
-            return $this->processSendResetEmail($request);
-        }
-
-        return view('core::session_passwordreset');
+        return view('session_passwordreset');
     }
 
     /**
-     * Process sending password reset email.
+     * @originalName loginLogCheck
+     *
+     * @originalFile SessionsController.php
      */
-    protected function processSendResetEmail(Request $request): RedirectResponse
+    private function loginLogCheck($username)
     {
-        $email = $request->input('email');
+        $login_log_query = $this->db->where('login_name', $username)->get('ip_login_log')->row();
+        if ( ! empty($login_log_query) && $login_log_query->log_count > 10) {
+            $current_time = new DateTime();
+            $interval     = $current_time->diff(new DateTime($login_log_query->log_create_timestamp));
+            //if the last recorded failed attempt is over 12 hours ago, then unlock the account
+            //the fails are only counted up to 11, this means that the account is also unlocked
+            //if the last failed 11th login attempt is over 12 hours ago.
+            if ($interval->h > 12) {
+                $this->loginLogReset($username);
 
-        // Validate email format
-        if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return redirect('/');
+                return;
+            }
         }
 
-        // Check for throttling
-        $loginLog = DB::table('ip_login_log')
-            ->where('login_name', $email)
-            ->first();
-
-        if ($loginLog && $loginLog->log_count >= 10) {
-            return redirect()->route('sessions.login')
-                ->with('alert_error', trans('core::messages.loginalert_too_many_attempts'));
-        }
-
-        $user = User::where('user_email', $email)
-            ->where('user_active', 1)
-            ->first();
-
-        if ($user) {
-            // Generate reset token
-            $token                          = Str::random(32);
-            $user->user_passwordreset_token = $token;
-            $user->save();
-
-            // Send email (simplified for now)
-            Mail::raw('Password reset link: ' . route('sessions.passwordreset', ['token' => $token]), function ($message) use ($user) {
-                $message->to($user->user_email)
-                    ->subject('Password Reset');
-            });
-        }
-
-        // Always increment attempt counter for password resets (security measure)
-        $this->incrementLoginFailures($email);
-
-        return redirect()->route('sessions.login')
-            ->with('alert_success', trans('core::messages.loginalert_reset_email_sent'));
+        return $login_log_query;
     }
 
     /**
-     * Process setting new password.
+     * @originalName loginLogAddfailure
+     *
+     * @originalFile SessionsController.php
      */
-    protected function processNewPassword(Request $request): RedirectResponse
+    private function loginLogAddfailure($username)
     {
-        $token       = $request->input('token');
-        $userId      = $request->input('user_id');
-        $newPassword = $request->input('new_password');
-
-        if (empty($newPassword)) {
-            return redirect()->back()
-                ->with('alert_error', trans('core::messages.loginalert_password_required'));
-        }
-
-        $user = User::where('id', $userId)
-            ->where('user_passwordreset_token', $token)
-            ->first();
-
-        if ( ! $user) {
-            return redirect()->back()
-                ->with('alert_error', trans('core::messages.loginalert_invalid_token'));
-        }
-
-        // Update password
-        $user->user_password            = Hash::make($newPassword);
-        $user->user_passwordreset_token = '';
-        $user->save();
-
-        return redirect()->route('sessions.login')
-            ->with('alert_success', trans('core::messages.loginalert_password_updated'));
-    }
-
-    /**
-     * Increment login failure count.
-     */
-    protected function incrementLoginFailures(string $email): void
-    {
-        $loginLog = DB::table('ip_login_log')
-            ->where('login_name', $email)
-            ->first();
-
-        if ($loginLog) {
-            DB::table('ip_login_log')
-                ->where('login_name', $email)
-                ->update([
-                    'log_count'            => $loginLog->log_count + 1,
-                    'log_create_timestamp' => now(),
-                ]);
+        if (empty($login_log_check = $this->loginLogCheck($username))) {
+            //create the log
+            $this->db->insert('ip_login_log', ['login_name' => $username, 'log_count' => 1, 'log_create_timestamp' => date('c')]);
         } else {
-            DB::table('ip_login_log')->insert([
-                'login_name'           => $email,
-                'log_count'            => 1,
-                'log_create_timestamp' => now(),
-                'created_at'           => now(),
-                'updated_at'           => now(),
-            ]);
+            //update the log
+            $this->db->set(['log_count' => $login_log_check->log_count + 1, 'log_create_timestamp' => date('c')])->where('login_name', $username)->update('ip_login_log');
         }
+    }
+
+    /**
+     * @originalName loginLogReset
+     *
+     * @originalFile SessionsController.php
+     */
+    private function loginLogReset($username)
+    {
+        $this->db->delete('ip_login_log', ['login_name' => $username]);
     }
 }
