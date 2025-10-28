@@ -9,7 +9,7 @@ class SettingFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = \App\Models\Setting::class;
+    protected $model = \Modules\Core\src\Models\Setting::class;
 
     /**
      * Define the model's default state.

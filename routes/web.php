@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use Modules\Core\src\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------

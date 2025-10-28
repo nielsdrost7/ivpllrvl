@@ -1,29 +1,38 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
 
-    <title>Core Module - {{ config('app.name', 'Laravel') }}</title>
+    <title>headerTitleText</title>
 
-    <meta name="description" content="{{ $description ?? '' }}">
-    <meta name="keywords" content="{{ $keywords ?? '' }}">
-    <meta name="author" content="{{ $author ?? '' }}">
+    @include('layouts.partials._head')
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    @include('layouts.partials._js_global')
 
-    {{-- Vite CSS --}}
-    {{-- {{ module_vite('build-core', 'resources/assets/sass/app.scss', storage_path('vite.hot')) }} --}}
+    @yield('head')
+
+    @yield('javascript')
+
 </head>
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
 
-<body>
-    @yield('content')
+@include('layouts.partials._header')
 
-    {{-- Vite JS --}}
-    {{-- {{ module_vite('build-core', 'resources/assets/js/app.js', storage_path('vite.hot')) }} --}}
+<div class="app-body">
+
+    @include('layouts.partials._sidebar')
+
+    <main class="main">
+        <div class="container-fluid pt-3">
+            @yield('content')
+        </div>
+    </main>
+
+</div>
+
+<div id="modal-placeholder"></div>
+
 </body>
+</html>
