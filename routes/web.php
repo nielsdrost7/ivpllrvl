@@ -16,3 +16,11 @@ declare(strict_types=1);
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/dashboard', function () {
+    return 'Dashboard';
+})->name('dashboard');
+
+Route::get('/guest', function () {
+    return 'Guest Area';
+})->name('guest');

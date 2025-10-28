@@ -3,7 +3,6 @@
 namespace Modules\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -94,9 +93,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function registerFactories()
     {
-        if (! app()->environment('production')) {
-            app(Factory::class)->load(__DIR__ . '/Database/factories');
-        }
+        // Factory registration is handled by Laravel 12's auto-discovery
     }
 
     /**

@@ -15,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Load Core module translations
+        $this->loadTranslationsFrom(base_path('Modules/Core/Resources/lang'), 'core');
     }
 
     /**
