@@ -3,7 +3,7 @@
 namespace Modules\Projects\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Clients\Models\Client;
+use Modules\Crm\Models\Client;
 
 class ProjectFactory extends Factory
 {
@@ -18,8 +18,8 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'project_name' => $this->faker->catchPhrase(),
-            'client_id' => Client::factory(),
+            'project_name'        => $this->faker->catchPhrase(),
+            'client_id'           => Client::factory(),
             'project_description' => $this->faker->paragraph(),
         ];
     }

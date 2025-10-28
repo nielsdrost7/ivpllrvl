@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Crm\Http\Controllers\CrmController;
+use Modules\Crm\Controllers\CrmController;
 
 /*
  *--------------------------------------------------------------------------

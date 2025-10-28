@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Quotes\Http\Controllers\QuotesController;
+use Modules\Quotes\Http\Controllers\PaymentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +15,5 @@ use Modules\Quotes\Http\Controllers\QuotesController;
 */
 
 Route::group([], function () {
-    Route::resource('quotes', QuotesController::class)->names('quotes');
+    Route::resource('quotes', PaymentsController::class)->names('quotes');
 });

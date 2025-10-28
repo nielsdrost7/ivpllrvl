@@ -1,10 +1,11 @@
 {
+    "Clients": true,
+    "Core": true,
     "Crm": true,
     "Expenses": true,
     "Invoices": true,
+    "Payments": true,
     "Products": true,
     "Projects": true,
-    "Quotes": true,
-    "Core": true,
-    "Clients": true
+    "Quotes": true
 }

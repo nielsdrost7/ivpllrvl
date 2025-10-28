@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\StringType;
@@ -39,7 +37,7 @@ use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
-        __DIR__.'/app',
+        __DIR__ . '/app',
         // __DIR__ . '/bootstrap',
         // __DIR__ . '/config',
         // __DIR__ . '/public_html',

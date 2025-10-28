@@ -16,8 +16,8 @@ return [
     ],
 
     'task' => [
-        'pending' => ['label' => 'Pending', 'class' => 'label-warning'],
+        'pending'     => ['label' => 'Pending', 'class' => 'label-warning'],
         'in_progress' => ['label' => 'In Progress', 'class' => 'label-info'],
-        'completed' => ['label' => 'Completed', 'class' => 'label-success'],
+        'completed'   => ['label' => 'Completed', 'class' => 'label-success'],
     ],
 ];

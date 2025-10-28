@@ -18,10 +18,10 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'task_name' => $this->faker->sentence(),
-            'task_status' => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
+            'task_name'        => $this->faker->sentence(),
+            'task_status'      => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
             'task_finish_date' => $this->faker->dateTimeBetween('now', '+30 days'),
-            'project_id' => Project::factory(),
+            'project_id'       => Project::factory(),
         ];
     }
 }

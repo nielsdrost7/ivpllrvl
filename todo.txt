@@ -1,0 +1,4 @@
+Class Modules\Payments\Models\Payment located in ./Modules/Payments/src/Models/Payment.php does not comply with psr-4 autoloading standard (rule: Modules\Quotes\ => ./Modules/Payments/src). Skipping.
+Class Modules\Payments\Providers\RouteServiceProvider located in ./Modules/Payments/src/Providers/RouteServiceProvider.php does not comply with psr-4 autoloading standard (rule: Modules\Quotes\ => ./Modules/Payments/src). Skipping.
+Class Modules\Payments\Providers\PaymentServiceProvider located in ./Modules/Payments/src/Providers/PaymentServiceProvider.php does not comply with psr-4 autoloading standard (rule: Modules\Quotes\ => ./Modules/Payments/src). Skipping.
+Class Modules\Payments\Controllers\PaymentsController located in ./Modules/Payments/src/Controllers/PaymentsController.php does not comply with psr-4 autoloading standard (rule: Modules\Quotes\ => ./Modules/Payments/src). Skipping.
