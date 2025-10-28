@@ -1,22 +1,35 @@
-
 /**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
+ * InvoicePlane Application JavaScript
+ * This file loads all JavaScript dependencies and initializes the application.
  */
 
-require('./bootstrap');
+// Import dependencies from Gruntfile.js concat task
+import 'jquery';
+import 'jquery-ui-dist/jquery-ui';
+import 'bootstrap/dist/js/bootstrap.bundle';
+import '@coreui/coreui/dist/js/coreui';
+import 'autosize/dist/autosize';
+import 'moment';
+import 'bootstrap-notify';
+import 'jquery-slimscroll';
 
-window.Vue = require('vue');
+// Import SASS/SCSS files
+import '../sass/app.scss';
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+// Initialize jQuery on window for legacy code
+window.$ = window.jQuery = $;
 
-Vue.component('example', require('./components/Example.vue'));
+// Initialize CSRF token handling
+const token = document.head.querySelector('meta[name="csrf-token"]');
 
-const app = new Vue({
-    el: '#app'
-});
+if (token) {
+    // Set CSRF token for jQuery ajax requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': token.content
+        }
+    });
+}
+
+// Initialize any app-specific code here
+console.log('InvoicePlane application loaded');
