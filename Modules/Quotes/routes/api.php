@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Quotes\Http\Controllers\PaymentsController;
+use Modules\Quotes\Controllers\QuotesController;
 
 /*
  *--------------------------------------------------------------------------
@@ -15,5 +15,5 @@ use Modules\Quotes\Http\Controllers\PaymentsController;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('quotes', PaymentsController::class)->names('quotes');
+    Route::apiResource('quotes', QuotesController::class)->names('quotes');
 });

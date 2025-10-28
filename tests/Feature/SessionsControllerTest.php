@@ -8,11 +8,6 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
-use function Modules\Core\Tests\Feature\now;
-use function Modules\Core\Tests\Feature\route;
-use function Modules\Core\Tests\Feature\trans;
-
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

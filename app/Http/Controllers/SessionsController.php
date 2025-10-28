@@ -13,14 +13,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
-use function Modules\Core\Http\Controllers\auth;
-use function Modules\Core\Http\Controllers\now;
-use function Modules\Core\Http\Controllers\redirect;
-use function Modules\Core\Http\Controllers\route;
-use function Modules\Core\Http\Controllers\session;
-use function Modules\Core\Http\Controllers\trans;
-use function Modules\Core\Http\Controllers\view;
-
 class SessionsController extends Controller
 {
     protected SessionsService $sessionsService;

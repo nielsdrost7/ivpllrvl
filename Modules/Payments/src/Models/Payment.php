@@ -32,8 +32,8 @@ class Payment extends Model
         return $this->belongsTo(Client::class);
     }
 
-    protected static function newFactory(): QuoteFactory
+    /*protected static function newFactory(): QuoteFactory
     {
         return QuoteFactory::new();
-    }
+    }*/
 }

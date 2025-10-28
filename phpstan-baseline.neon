@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property App\\Services\\SessionsService\:\:\$crypt\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/SessionsService.php

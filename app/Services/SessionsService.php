@@ -4,9 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 
-use function Modules\Core\Services\auth;
-use function Modules\Core\Services\session;
-
 class SessionsService extends BaseService
 {
     /**

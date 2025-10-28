@@ -1,20 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature;
 
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-
-use function Modules\Core\Tests\Feature\now;
-use function Modules\Core\Tests\Feature\route;
-
 use Modules\Crm\Models\Client;
 use Modules\Invoices\Models\Invoice;
 use Modules\Projects\Models\Project;
 use Modules\Projects\Models\Task;
-use Modules\Quotes\Models\Payment;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

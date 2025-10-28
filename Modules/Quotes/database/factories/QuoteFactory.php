@@ -4,13 +4,14 @@ namespace Modules\Quotes\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Crm\Models\Client;
+use Modules\Quotes\Models\Quote;
 
 class QuoteFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = \Modules\Quotes\Models\Payment::class;
+    protected $model = Quote::class;
 
     /**
      * Define the model's default state.

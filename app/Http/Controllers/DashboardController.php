@@ -4,18 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\View\View;
-
-use function Modules\Core\Http\Controllers\config;
-
 use Modules\Core\Http\Controllers\CoreController;
-
-use function Modules\Core\Http\Controllers\now;
-use function Modules\Core\Http\Controllers\view;
-
 use Modules\Invoices\Models\Invoice;
 use Modules\Projects\Models\Project;
 use Modules\Projects\Models\Task;
-use Modules\Quotes\Models\Payment;
+use Modules\Quotes\Models\Quote;
 
 class DashboardController extends CoreController
 {
@@ -49,7 +42,7 @@ class DashboardController extends CoreController
             ->get();
 
         // Get recent quotes (limited to 10)
-        $quotes = Payment::with('client')
+        $quotes = Quote::with('client')
             ->latest('quote_date_created')
             ->limit(10)
             ->get();
@@ -122,8 +115,8 @@ class DashboardController extends CoreController
         $statuses = config('statuses.quote');
 
         for ($statusId = self::MIN_STATUS_ID; $statusId <= self::MAX_STATUS_ID; $statusId++) {
-            $count    = Payment::where('quote_status_id', $statusId)->count();
-            $sumTotal = Payment::where('quote_status_id', $statusId)->sum('quote_total');
+            $count    = Quote::query()->where('quote_status_id', $statusId)->count();
+            $sumTotal = Quote::query()->where('quote_status_id', $statusId)->sum('quote_total');
 
             $totals[] = [
                 'status_id' => $statusId,
