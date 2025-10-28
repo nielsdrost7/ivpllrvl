@@ -11,7 +11,7 @@
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
 
     @filamentStyles
-    @vite('resources/css/app.css')
+    @vite(['resources/assets/sass/app.scss', 'resources/assets/js/app.js'])
 </head>
 
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
@@ -113,7 +113,6 @@
 </div>
 
 @filamentScripts
-@vite('resources/js/app.js')
 
 </body>
 </html>
