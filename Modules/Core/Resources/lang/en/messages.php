@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'login' => 'Login',
+    'email' => 'Email',
+    'password' => 'Password',
+    'forgot_your_password' => 'Forgot your password?',
+    'please_enable_js' => 'Please enable JavaScript to use this application',
     'loginalert_user_not_found' => 'User not found',
     'loginalert_user_inactive' => 'User account is inactive',
     'loginalert_invalid_credentials' => 'Invalid credentials',

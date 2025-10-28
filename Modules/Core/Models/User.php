@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Modules\Core\Models;
 
+use App\Company;
+use Database\Factories\UserFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -39,6 +41,14 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     protected $hidden = [
         'password', 'remember_token', 'user_password', 'user_psalt',
     ];
+    
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
     
     /**
      * Get user_id attribute (alias for id for backward compatibility).
