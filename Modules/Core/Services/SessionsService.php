@@ -16,7 +16,7 @@ class SessionsService extends BaseService
      * @param string $email    the user's email address used to locate the account
      * @param string $password the plaintext password to verify
      *
-     * @return bool `true` if authentication succeeds and session data is set (session contains `user_type`, `user_id`, `user_name`, `user_email`, `user_company`, and `user_language`), `false` otherwise
+     * @return bool `true` if authentication succeeds and session data is set (session contains `user_type`, `id`, `user_name`, `user_email`, `user_company`, and `user_language`), `false` otherwise
      */
     public function auth($email, $password)
     {
@@ -42,7 +42,7 @@ class SessionsService extends BaseService
                     $hash     = $this->crypt->generate_password($password, $salt);
                     $db_array = ['user_psalt' => $salt, 'user_password' => $hash];
 
-                    User::query()->where('user_id', $user->user_id)->update($db_array);
+                    User::query()->where('id', $user->id)->update($db_array);
                     $user = User::query()->where('user_email', $email)->first();
                 } else {
                     // The password didn't verify against original md5
@@ -50,8 +50,11 @@ class SessionsService extends BaseService
                 }
             }
             if ($this->crypt->check_password($user->user_password, $password)) {
-                $session_data = ['user_type' => $user->user_type, 'user_id' => $user->user_id, 'user_name' => $user->user_name, 'user_email' => $user->user_email, 'user_company' => $user->user_company, 'user_language' => $user->user_language ?? 'system'];
+                $session_data = ['user_type' => $user->user_type, 'id' => $user->id, 'user_name' => $user->user_name, 'user_email' => $user->user_email, 'user_company' => $user->user_company, 'user_language' => $user->user_language ?? 'system'];
                 session()->put($session_data);
+                
+                // Also log in the user using Laravel's auth system
+                auth()->login($user);
 
                 return true;
             }

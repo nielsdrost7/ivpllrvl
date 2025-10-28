@@ -231,7 +231,7 @@ class SessionsController extends Controller
                 ->with('alert_error', trans('core::messages.loginalert_password_required'));
         }
 
-        $user = User::where('user_id', $userId)
+        $user = User::where('id', $userId)
             ->where('user_passwordreset_token', $token)
             ->first();
 

@@ -32,7 +32,7 @@ class SessionsControllerTest extends TestCase
         $response = $this->get(route('sessions.login'));
 
         $response->assertSuccessful();
-        $response->assertViewIs('session_login');
+        $response->assertViewIs('core::session_login');
         $response->assertViewHas('login_logo');
     }
 
@@ -178,7 +178,7 @@ class SessionsControllerTest extends TestCase
         $response = $this->get(route('sessions.passwordreset'));
 
         $response->assertSuccessful();
-        $response->assertViewIs('session_passwordreset');
+        $response->assertViewIs('core::session_passwordreset');
     }
 
     #[Test]
@@ -247,7 +247,7 @@ class SessionsControllerTest extends TestCase
         $response = $this->get(route('sessions.login', ['token' => 'valid_token_123']));
 
         $response->assertSuccessful();
-        $response->assertViewIs('session_new_password');
+        $response->assertViewIs('core::session_new_password');
         $response->assertViewHas('token', 'valid_token_123');
         $response->assertViewHas('user_id', $user->user_id);
     }

@@ -7,6 +7,7 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -16,8 +17,7 @@ use Illuminate\Support\Collection;
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use Notifiable;
-
-    protected $primaryKey = 'user_id';
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -39,6 +39,22 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     protected $hidden = [
         'password', 'remember_token', 'user_password', 'user_psalt',
     ];
+    
+    /**
+     * Get user_id attribute (alias for id for backward compatibility).
+     */
+    public function getUserIdAttribute()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * Set user_id attribute (alias for id for backward compatibility).
+     */
+    public function setUserIdAttribute($value)
+    {
+        $this->attributes['id'] = $value;
+    }
 
     public function companies(): BelongsToMany
     {
