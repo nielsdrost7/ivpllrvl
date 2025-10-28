@@ -2,11 +2,11 @@
 
 namespace Modules\Quotes\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Quotes\Database\Factories\QuoteFactory;
-use Modules\Clients\Models\Client;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Clients\Models\Client;
+use Modules\Quotes\Database\Factories\QuoteFactory;
 
 class Quote extends Model
 {

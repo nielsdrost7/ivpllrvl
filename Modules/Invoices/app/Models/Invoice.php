@@ -2,11 +2,11 @@
 
 namespace Modules\Invoices\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Invoices\Database\Factories\InvoiceFactory;
-use Modules\Clients\Models\Client;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Clients\Models\Client;
+use Modules\Invoices\Database\Factories\InvoiceFactory;
 
 class Invoice extends Model
 {
@@ -53,10 +53,10 @@ class Invoice extends Model
 
     public function getIsOverdueAttribute(): bool
     {
-        if (!$this->invoice_date_due) {
+        if (! $this->invoice_date_due) {
             return false;
         }
-        
+
         return $this->invoice_status_id == 2 && $this->invoice_date_due->isPast();
     }
 }

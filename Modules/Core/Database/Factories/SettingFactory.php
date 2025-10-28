@@ -22,4 +22,3 @@ class SettingFactory extends Factory
         ];
     }
 }
-

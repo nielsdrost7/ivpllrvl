@@ -2,11 +2,11 @@
 
 namespace Modules\Projects\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Projects\Database\Factories\ProjectFactory;
-use Modules\Clients\Models\Client;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Clients\Models\Client;
+use Modules\Projects\Database\Factories\ProjectFactory;
 
 class Project extends Model
 {

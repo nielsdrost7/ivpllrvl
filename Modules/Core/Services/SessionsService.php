@@ -13,9 +13,8 @@ class SessionsService extends BaseService
      *
      * If the user record contains an old MD5 password, a successful MD5 verification will replace it with the current salted hash format before continuing.
      *
-     * @param string $email    the user's email address used to locate the account
-     * @param string $password the plaintext password to verify
-     *
+     * @param  string  $email  the user's email address used to locate the account
+     * @param  string  $password  the plaintext password to verify
      * @return bool `true` if authentication succeeds and session data is set (session contains `user_type`, `id`, `user_name`, `user_email`, `user_company`, and `user_language`), `false` otherwise
      */
     public function auth($email, $password)
@@ -28,7 +27,7 @@ class SessionsService extends BaseService
              * Password hashing changed after 1.2.0
              * Check to see if user has logged in since the password change
              */
-            if ( ! $user->user_psalt) {
+            if (! $user->user_psalt) {
                 /*
                  * The user has not logged in, so we're going to attempt to
                  * update their record with the updated hash
@@ -38,8 +37,8 @@ class SessionsService extends BaseService
                      * The md5 login validated - let's update this user
                      * to the new hash.
                      */
-                    $salt     = $this->crypt->salt();
-                    $hash     = $this->crypt->generate_password($password, $salt);
+                    $salt = $this->crypt->salt();
+                    $hash = $this->crypt->generate_password($password, $salt);
                     $db_array = ['user_psalt' => $salt, 'user_password' => $hash];
 
                     User::query()->where('id', $user->id)->update($db_array);
@@ -52,7 +51,7 @@ class SessionsService extends BaseService
             if ($this->crypt->check_password($user->user_password, $password)) {
                 $session_data = ['user_type' => $user->user_type, 'id' => $user->id, 'user_name' => $user->user_name, 'user_email' => $user->user_email, 'user_company' => $user->user_company, 'user_language' => $user->user_language ?? 'system'];
                 session()->put($session_data);
-                
+
                 // Also log in the user using Laravel's auth system
                 auth()->login($user);
 

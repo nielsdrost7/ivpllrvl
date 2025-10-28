@@ -11,7 +11,5 @@ class ModuleProvider extends ServiceProvider
 {
     use BootModule;
 
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 }

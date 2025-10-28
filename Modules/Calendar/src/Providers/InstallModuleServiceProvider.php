@@ -14,8 +14,6 @@ class InstallModuleServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -26,16 +24,12 @@ class InstallModuleServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     private function booted(): void
     {
-        //Resolve your module dependency
+        // Resolve your module dependency
 
         $this->createSchema();
     }

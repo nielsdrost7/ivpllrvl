@@ -10,10 +10,8 @@ class ExampleTest extends TestCase
 {
     /**
      * A basic test example.
-     *
-     * @return void
      */
-    public function testBasicTest(): void
+    public function test_basic_test(): void
     {
         $response = $this->get('/');
 

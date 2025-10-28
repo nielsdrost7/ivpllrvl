@@ -22,7 +22,7 @@ class Crypt
      */
     public function generate_password(string $password, string $salt): string
     {
-        return Hash::make($password . $salt);
+        return Hash::make($password.$salt);
     }
 
     /**

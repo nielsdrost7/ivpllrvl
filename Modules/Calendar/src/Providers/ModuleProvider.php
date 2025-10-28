@@ -10,17 +10,15 @@ class ModuleProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
         // Load views
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'calendar');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'calendar');
         // Load translations
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'calendar');
+        $this->loadTranslationsFrom(__DIR__.'/../../resources/lang', 'calendar');
         // Load migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
         /*
         $this->publishes([
@@ -41,12 +39,10 @@ class ModuleProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register(): void
     {
-        //Load helpers
+        // Load helpers
         $this->loadHelpers();
 
         $this->app->register(RouteServiceProvider::class);
@@ -56,7 +52,7 @@ class ModuleProvider extends ServiceProvider
 
     protected function loadHelpers(): void
     {
-        $helpers = $this->app['files']->glob(__DIR__ . '/../../helpers/*.php');
+        $helpers = $this->app['files']->glob(__DIR__.'/../../helpers/*.php');
         foreach ($helpers as $helper) {
             require_once $helper;
         }

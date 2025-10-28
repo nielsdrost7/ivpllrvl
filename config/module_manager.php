@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * Created by PhpStorm.
  * User: m
@@ -8,6 +9,6 @@ declare(strict_types=1);
  * Time: 11:11 AM.
  */
 return [
-  'module_directory' => 'Modules',
-  'plugin_directory' => 'Modules',
+    'module_directory' => 'Modules',
+    'plugin_directory' => 'Modules',
 ];

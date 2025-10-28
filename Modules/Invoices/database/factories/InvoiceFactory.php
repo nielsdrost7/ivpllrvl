@@ -18,11 +18,11 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         $total = $this->faker->randomFloat(2, 100, 10000);
-        
+
         return [
             'client_id' => Client::factory(),
             'invoice_status_id' => $this->faker->numberBetween(1, 4),
-            'invoice_number' => 'INV-' . $this->faker->unique()->numberBetween(1000, 9999),
+            'invoice_number' => 'INV-'.$this->faker->unique()->numberBetween(1000, 9999),
             'invoice_date_created' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'invoice_date_due' => $this->faker->dateTimeBetween('now', '+30 days'),
             'invoice_balance' => $total,
@@ -34,4 +34,3 @@ class InvoiceFactory extends Factory
         ];
     }
 }
-

@@ -20,10 +20,9 @@ class QuoteFactory extends Factory
         return [
             'client_id' => Client::factory(),
             'quote_status_id' => $this->faker->numberBetween(1, 4),
-            'quote_number' => 'QUO-' . $this->faker->unique()->numberBetween(1000, 9999),
+            'quote_number' => 'QUO-'.$this->faker->unique()->numberBetween(1000, 9999),
             'quote_date_created' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'quote_total' => $this->faker->randomFloat(2, 100, 10000),
         ];
     }
 }
-

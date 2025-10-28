@@ -4,14 +4,15 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Modules\Clients\Models\Client;
+use Modules\Core\Models\Setting;
 use Modules\Core\Models\User;
 use Modules\Invoices\Models\Invoice;
-use Modules\Quotes\Models\Quote;
 use Modules\Projects\Models\Project;
 use Modules\Projects\Models\Task;
-use Modules\Core\Models\Setting;
+use Modules\Quotes\Models\Quote;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class DashboardControllerTest extends TestCase
 {
@@ -31,8 +32,8 @@ class DashboardControllerTest extends TestCase
     public function it_displays_dashboard_with_overview_data(): void
     {
         // Arrange: create sample data
-        $client = \Modules\Clients\Models\Client::factory()->create();
-        $invoice = \Modules\Invoices\Models\Invoice::factory()->create([
+        $client = Client::factory()->create();
+        $invoice = Invoice::factory()->create([
             'client_id' => $client->id,
             'total' => 1000,
         ]);

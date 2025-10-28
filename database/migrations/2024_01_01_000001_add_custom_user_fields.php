@@ -35,7 +35,7 @@ return new class extends Migration
             $table->dropColumn([
                 'user_name', 'user_email', 'user_password', 'user_psalt',
                 'user_active', 'user_type', 'user_company', 'user_language',
-                'user_passwordreset_token'
+                'user_passwordreset_token',
             ]);
         });
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\Core\Http\Controllers;
 
-use Modules\Core\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -13,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Modules\Core\Models\User;
 use Modules\Core\Services\SessionsService;
 
 class SessionsController extends Controller
@@ -40,15 +40,15 @@ class SessionsController extends Controller
         // Check if token is provided for password reset
         if ($request->has('token')) {
             $token = $request->input('token');
-            
+
             // Validate token contains only alphanumeric and underscores
-            if (!preg_match('/^[a-zA-Z0-9_]+$/', $token)) {
+            if (! preg_match('/^[a-zA-Z0-9_]+$/', $token)) {
                 return redirect('/');
             }
 
             $user = User::where('user_passwordreset_token', $token)->first();
-            
-            if (!$user) {
+
+            if (! $user) {
                 return redirect()->route('sessions.passwordreset')
                     ->with('alert_error', trans('core::messages.loginalert_invalid_token'));
             }
@@ -78,7 +78,7 @@ class SessionsController extends Controller
      */
     public function loginPost(Request $request): RedirectResponse
     {
-        if (!$request->has('btn_login')) {
+        if (! $request->has('btn_login')) {
             return redirect()->route('sessions.login');
         }
 
@@ -110,8 +110,9 @@ class SessionsController extends Controller
         // Find user
         $user = User::where('user_email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             $this->incrementLoginFailures($email);
+
             return redirect()->route('sessions.login')
                 ->with('alert_error', trans('core::messages.loginalert_user_not_found'));
         }
@@ -119,6 +120,7 @@ class SessionsController extends Controller
         // Check if user is active
         if ($user->user_active != 1) {
             $this->incrementLoginFailures($email);
+
             return redirect()->route('sessions.login')
                 ->with('alert_error', trans('core::messages.loginalert_user_inactive'));
         }
@@ -140,6 +142,7 @@ class SessionsController extends Controller
 
         // Authentication failed
         $this->incrementLoginFailures($email);
+
         return redirect()->route('sessions.login')
             ->with('alert_error', trans('core::messages.loginalert_invalid_credentials'));
     }
@@ -179,7 +182,7 @@ class SessionsController extends Controller
         $email = $request->input('email');
 
         // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return redirect('/');
         }
 
@@ -204,12 +207,12 @@ class SessionsController extends Controller
             $user->save();
 
             // Send email (simplified for now)
-            Mail::raw("Password reset link: " . route('sessions.passwordreset', ['token' => $token]), function ($message) use ($user) {
+            Mail::raw('Password reset link: '.route('sessions.passwordreset', ['token' => $token]), function ($message) use ($user) {
                 $message->to($user->user_email)
                     ->subject('Password Reset');
             });
         }
-        
+
         // Always increment attempt counter for password resets (security measure)
         $this->incrementLoginFailures($email);
 
@@ -235,7 +238,7 @@ class SessionsController extends Controller
             ->where('user_passwordreset_token', $token)
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->back()
                 ->with('alert_error', trans('core::messages.loginalert_invalid_token'));
         }

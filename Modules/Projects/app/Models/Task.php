@@ -2,10 +2,10 @@
 
 namespace Modules\Projects\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Projects\Database\Factories\TaskFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Projects\Database\Factories\TaskFactory;
 
 class Task extends Model
 {
@@ -37,10 +37,10 @@ class Task extends Model
 
     public function getIsOverdueAttribute(): bool
     {
-        if (!$this->task_finish_date) {
+        if (! $this->task_finish_date) {
             return false;
         }
-        
+
         return $this->task_finish_date->isPast() && $this->task_status != 'completed';
     }
 }
