@@ -3,7 +3,7 @@
 namespace Modules\Core\Controllers;
 
 use AllowDynamicProperties;
-use Modules\Core\Controllers\GuestController as BaseGuestController;
+use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 
 use function Modules\Guest\Controllers\config_item;
 
@@ -16,7 +16,7 @@ use Modules\Invoices\Services\InvoiceTaxRatesService;
 use Modules\Invoices\Services\ItemsService;
 
 #[AllowDynamicProperties]
-class InvoicesController extends BaseGuestController
+class InvoicesControllerUserClient extends BaseGuestController
 {
     /**
      * Initialize the InvoicesController for guest access.

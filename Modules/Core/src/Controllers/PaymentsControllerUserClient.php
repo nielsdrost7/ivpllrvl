@@ -3,14 +3,14 @@
 namespace Modules\Core\Controllers;
 
 use AllowDynamicProperties;
-use Modules\Core\Controllers\GuestController as BaseGuestController;
+use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 
 use function Modules\Guest\Controllers\site_url;
 
 use Modules\Payments\Services\PaymentsService;
 
 #[AllowDynamicProperties]
-class PaymentsController extends BaseGuestController
+class PaymentsControllerUserClient extends BaseGuestController
 {
     /**
      * Initialize the PaymentsController.

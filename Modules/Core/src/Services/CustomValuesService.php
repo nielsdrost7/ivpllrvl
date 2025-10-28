@@ -4,8 +4,8 @@ namespace Modules\Core\Services;
 
 use AllowDynamicProperties;
 use Illuminate\Support\Facades\Log;
-use Modules\Core\Models\CustomValue;
 use Modules\Core\Models\CustomField;
+use Modules\Core\Models\CustomValue;
 
 #[AllowDynamicProperties]
 class CustomValuesService extends BaseService

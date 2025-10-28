@@ -3,7 +3,7 @@
 namespace Modules\Core\Controllers;
 
 use AllowDynamicProperties;
-use Modules\Core\Controllers\GuestController as BaseGuestController;
+use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 
 use function Modules\Guest\Controllers\config_item;
 
@@ -16,7 +16,7 @@ use Modules\Quotes\Services\QuoteItemsService;
 use Modules\Quotes\Services\QuoteTaxRatesService;
 
 #[AllowDynamicProperties]
-class QuotesController extends BaseGuestController
+class QuotesControllerUserClient extends BaseGuestController
 {
     /**
      * Initialize the guest quotes controller.

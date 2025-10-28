@@ -6,7 +6,7 @@ use AllowDynamicProperties;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Modules\Core\Controllers\GuestController as BaseGuestController;
+use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 use Modules\Core\Services\CustomFieldsService;
 
 use function Modules\Guest\Controllers\show_404;
@@ -20,7 +20,7 @@ use Modules\Quotes\Services\QuotesService;
 use Modules\Quotes\Services\QuoteTaxRatesService;
 
 #[AllowDynamicProperties]
-class GuestViewController extends BaseGuestController
+class UserClientGuestViewController extends BaseGuestController
 {
     /**
      * Render the public invoice page identified by a URL key.

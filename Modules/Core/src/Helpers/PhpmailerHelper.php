@@ -1,9 +1,6 @@
 <?php
 
-namespace Modules\Core\src\Controllers\Helpers;
-
-use function Modules\Mailer\Helpers\env_bool;
-use function Modules\Mailer\Helpers\get_instance;
+namespace Modules\Core\Controllers\Helpers;
 
 class PhpmailerHelper
 {

@@ -5,7 +5,7 @@ namespace Modules\Core\Controllers;
 use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
-class GuestController extends UserController
+class UserClientGuestController extends UserController
 {
     /** @var array */
     public $user_clients = [];

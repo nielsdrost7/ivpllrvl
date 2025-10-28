@@ -3,12 +3,12 @@
 namespace Modules\Core\Controllers;
 
 use AllowDynamicProperties;
-use Modules\Core\Controllers\GuestController as BaseGuestController;
+use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 use Modules\Guest\Controllers\InvoicesService;
 use Modules\Guest\Controllers\QuotesService;
 
 #[AllowDynamicProperties]
-class CustomerPortalController extends BaseGuestController
+class CustomerPortalControllerUserClient extends BaseGuestController
 {
     /**
      * Prepare guest dashboard data and render the guest layout.
