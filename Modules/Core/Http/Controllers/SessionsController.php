@@ -41,8 +41,8 @@ class SessionsController extends Controller
         if ($request->has('token')) {
             $token = $request->input('token');
             
-            // Validate token is alphanumeric
-            if (!ctype_alnum($token)) {
+            // Validate token contains only alphanumeric and underscores
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $token)) {
                 return redirect('/');
             }
 
@@ -53,13 +53,13 @@ class SessionsController extends Controller
                     ->with('alert_error', trans('core::messages.loginalert_invalid_token'));
             }
 
-            return view('session_new_password', [
+            return view('core::session_new_password', [
                 'token' => $token,
                 'user_id' => $user->user_id,
             ]);
         }
 
-        return view('session_login', [
+        return view('core::session_login', [
             'login_logo' => 'logo.png',
         ]);
     }
@@ -168,7 +168,7 @@ class SessionsController extends Controller
             return $this->processSendResetEmail($request);
         }
 
-        return view('session_passwordreset');
+        return view('core::session_passwordreset');
     }
 
     /**
@@ -208,10 +208,10 @@ class SessionsController extends Controller
                 $message->to($user->user_email)
                     ->subject('Password Reset');
             });
-
-            // Increment attempt counter
-            $this->incrementLoginFailures($email);
         }
+        
+        // Always increment attempt counter for password resets (security measure)
+        $this->incrementLoginFailures($email);
 
         return redirect()->route('sessions.login')
             ->with('alert_success', trans('core::messages.loginalert_reset_email_sent'));

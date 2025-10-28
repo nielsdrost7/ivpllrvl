@@ -217,6 +217,8 @@ class SessionsControllerTest extends TestCase
     #[Test]
     public function it_throttles_password_reset_attempts(): void
     {
+        Mail::fake();
+        
         $user = User::factory()->create([
             'user_email'  => 'test@example.com',
             'user_active' => 1,
