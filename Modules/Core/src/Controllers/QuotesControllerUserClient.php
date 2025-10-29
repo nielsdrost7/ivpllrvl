@@ -9,7 +9,6 @@ use function Modules\Guest\Controllers\config_item;
 
 use Modules\Guest\Controllers\QuotesService;
 
-use function Modules\Guest\Controllers\show_404;
 use function Modules\Guest\Controllers\site_url;
 
 use Modules\Quotes\Services\QuoteItemsService;
@@ -36,7 +35,7 @@ class QuotesControllerUserClient extends BaseGuestController
     public function index()
     {
         // Display open quotes by default
-        redirect()->route('guest/quotes/status/open');
+        return redirect()->route('guest/quotes/status/open');
     }
 
     /**
@@ -99,11 +98,9 @@ class QuotesControllerUserClient extends BaseGuestController
         // Sets the current URL in the session to force redirect_to()
         $quote = (new QuotesService())->guestVisible()->where('ip_quotes.quote_id', $quote_id)->where_in('ip_quotes.client_id', $this->user_clients)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
-        (new QuotesService())->markViewed($quote->quote_id);
-        $this->load->helper('dropzone');
-        $this->layout->set(['quote_id' => $quote_id, 'quote' => $quote, 'items' => (new QuoteItemsService())->getByQuoteId($quote_id), 'quote_tax_rates' => (new QuoteTaxRatesService())->getByQuoteId($quote_id), 'legacy_calculation' => config_item('legacy_calculation')]);
+        (new QuotesService())->markViewed($quote->quote_id);$this->layout->set(['quote_id' => $quote_id, 'quote' => $quote, 'items' => (new QuoteItemsService())->getByQuoteId($quote_id), 'quote_tax_rates' => (new QuoteTaxRatesService())->getByQuoteId($quote_id), 'legacy_calculation' => config_item('legacy_calculation')]);
         $this->layout->buffer('content', 'guest/quotes_view');
         $this->layout->render('layout_guest');
     }
@@ -119,12 +116,10 @@ class QuotesControllerUserClient extends BaseGuestController
      * @param string|null $quote_template optional template identifier to use when generating the PDF
      */
     public function generatePdf($quote_id, $stream = true, $quote_template = null)
-    {
-        $this->load->helper('pdf');
-        (new QuotesService())->markViewed($quote_id);
+    {(new QuotesService())->markViewed($quote_id);
         $quote = (new QuotesService())->guestVisible()->where('ip_quotes.quote_id', $quote_id)->where_in('ip_quotes.client_id', $this->user_clients)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
         generate_quote_pdf($quote_id, $stream, $quote_template);
     }

@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Session;
 use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 use Modules\Core\Services\CustomFieldsService;
 
-use function Modules\Guest\Controllers\show_404;
-
 use Modules\Invoices\Services\InvoicesService;
 use Modules\Invoices\Services\InvoiceTaxRatesService;
 use Modules\Invoices\Services\ItemsService;
@@ -88,12 +86,8 @@ class UserClientGuestViewController extends BaseGuestController
         $invoice = (new InvoicesService())->guestVisible()->where('invoice_url_key', $invoice_url_key)->get();
         if ($invoice->numRows() == 1) {
             $invoice = $invoice->row();
-            if ( ! $invoice_template) {
-                $this->load->helper('template');
-                $invoice_template = select_pdf_invoice_template($invoice);
-            }
-            $this->load->helper('pdf');
-            generate_invoice_pdf($invoice->invoice_id, $stream, $invoice_template, 1);
+            if ( ! $invoice_template) {$invoice_template = select_pdf_invoice_template($invoice);
+            }generate_invoice_pdf($invoice->invoice_id, $stream, $invoice_template, 1);
         }
     }
 
@@ -115,13 +109,11 @@ class UserClientGuestViewController extends BaseGuestController
         if ($invoice->numRows() == 1) {
             $invoice = $invoice->row();
             if ($invoice->sumex_id == null) {
-                show_404();
+                abort(404);
             }
             if ( ! $invoice_template) {
                 $invoice_template = get_setting('pdf_invoice_template');
-            }
-            $this->load->helper('pdf');
-            generate_invoice_sumex($invoice->invoice_id);
+            }generate_invoice_sumex($invoice->invoice_id);
         }
     }
 
@@ -181,13 +173,11 @@ class UserClientGuestViewController extends BaseGuestController
     {
         $quote = (new QuotesService())->guestVisible()->where('quote_url_key', $quote_url_key)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
         if ( ! $quote_template) {
             $quote_template = get_setting('pdf_quote_template');
-        }
-        $this->load->helper('pdf');
-        generate_quote_pdf($quote->quote_id, $stream, $quote_template);
+        }generate_quote_pdf($quote->quote_id, $stream, $quote_template);
     }
 
     /**
@@ -199,7 +189,7 @@ class UserClientGuestViewController extends BaseGuestController
     {
         (new QuotesService())->approveQuoteByKey($quote_url_key);
         email_quote_status((new QuotesService())->where('ip_quotes.quote_url_key', $quote_url_key)->get()->row()->quote_id, 'approved');
-        redirect('guest/view/quote/' . $quote_url_key);
+        return redirect('guest/view/quote/' . $quote_url_key);
     }
 
     /**
@@ -211,7 +201,7 @@ class UserClientGuestViewController extends BaseGuestController
     {
         (new QuotesService())->rejectQuoteByKey($quote_url_key);
         email_quote_status((new QuotesService())->where('ip_quotes.quote_url_key', $quote_url_key)->get()->row()->quote_id, 'rejected');
-        redirect('guest/view/quote/' . $quote_url_key);
+        return redirect('guest/view/quote/' . $quote_url_key);
     }
 
     /**

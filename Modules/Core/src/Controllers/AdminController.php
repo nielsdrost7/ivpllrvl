@@ -20,7 +20,7 @@ class AdminController extends UserController
      */
     protected function filterInput(): void
     {
-        $input = $this->input->post();
+        $input = request()->input();
         array_walk($input, function (&$value, $key): void {
             if ( ! is_array($value)) {
                 $value = $this->security->xss_clean($value);

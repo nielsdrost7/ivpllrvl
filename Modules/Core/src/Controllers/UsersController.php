@@ -139,12 +139,12 @@ class UsersController extends AdminController
      */
     public function changePassword(string $user_id)
     {
-        if ($this->input->post('btn_cancel')) {
-            redirect()->route('users');
+        if (request()->input('btn_cancel')) {
+            return redirect()->route('users');
         }
         if ((new UsersService())->runValidation('validation_rules_change_password')) {
-            (new UsersService())->saveChangePassword($user_id, $this->input->post('user_password'));
-            redirect('users/form/' . $user_id);
+            (new UsersService())->saveChangePassword($user_id, request()->input('user_password'));
+            return redirect('users/form/' . $user_id);
         }
         $this->layout->buffer('content', 'users/form_change_password');
         $this->layout->render();
@@ -162,7 +162,7 @@ class UsersController extends AdminController
         if ($id != 1) {
             (new UsersService())->delete($id);
         }
-        redirect()->route('users');
+        return redirect()->route('users');
     }
 
     /**
@@ -174,6 +174,6 @@ class UsersController extends AdminController
     public function deleteUserClient(string $user_id, $user_client_id)
     {
         (new UserClientsService())->delete($user_client_id);
-        redirect('users/form/' . $user_id);
+        return redirect('users/form/' . $user_id);
     }
 }

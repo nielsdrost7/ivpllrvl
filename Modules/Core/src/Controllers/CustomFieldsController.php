@@ -25,7 +25,7 @@ class CustomFieldsController extends AdminController
     public function index(): void
     {
         // Display all custom_fields tables by default
-        redirect()->route('custom_fields/table/all');
+        return redirect()->route('custom_fields/table/all');
     }
 
     /**
@@ -57,17 +57,17 @@ class CustomFieldsController extends AdminController
      */
     public function form($id = null)
     {
-        if ($this->input->post('btn_cancel')) {
-            redirect()->route('custom_fields');
+        if (request()->input('btn_cancel')) {
+            return redirect()->route('custom_fields');
         }
         $this->filterInput();
         // <<<--- filters _POST array for nastiness
         if ((new CustomFieldsService())->runValidation()) {
             (new CustomFieldsService())->save($id);
-            redirect()->route('custom_fields');
+            return redirect()->route('custom_fields');
         }
-        if ($id && ! $this->input->post('btn_submit') && ! (new CustomFieldsService())->prepForm($id)) {
-            show_404();
+        if ($id && ! request()->input('btn_submit') && ! (new CustomFieldsService())->prepForm($id)) {
+            abort(404);
         }
 
         return view('custom_fields.form', ['custom_field_id' => $id, 'custom_field_tables' => (new CustomFieldsService())->customTables(), 'custom_field_types' => (new CustomFieldsService())->customTypes(), 'custom_field_usage' => (new CustomFieldsService())->used($id), 'custom_field_location' => (new CustomFieldsService())->formValue('custom_field_location'), 'positions' => (new CustomFieldsService())->getPositions()]);
@@ -83,10 +83,10 @@ class CustomFieldsController extends AdminController
     public function delete($id)
     {
         if ( ! (new CustomFieldsService())->delete($id)) {
-            $this->session->set_flashdata('alert_info', CustomFieldsController . phptrans('id') . sprintf(' "%s" ', $id) . trans('custom_fields_used_not_deletable'));
+            session()->flash('alert_info', CustomFieldsController . phptrans('id') . sprintf(' "%s" ', $id) . trans('custom_fields_used_not_deletable'));
         }
         // Return to page number of custom values or fields
         $r = empty($_SERVER['HTTP_REFERER']) ? 'custom_fields' : $_SERVER['HTTP_REFERER'];
-        redirect($r);
+        return redirect($r);
     }
 }
