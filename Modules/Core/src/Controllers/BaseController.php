@@ -29,7 +29,7 @@ class BaseController extends MXController
 
         // Check if database has been configured
         if ( ! env_bool('SETUP_COMPLETED')) {
-            redirect()->route('/welcome');
+            return redirect()->route('/welcome');
         } else {
             // Load setting model and load settings
             if ($this->mdl_settings != null) {

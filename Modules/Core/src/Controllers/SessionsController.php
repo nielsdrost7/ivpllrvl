@@ -25,7 +25,7 @@ class SessionsController extends BaseController
      */
     public function index()
     {
-        redirect()->route('sessions/login');
+        return redirect()->route('sessions/login');
     }
 
     /**
@@ -47,20 +47,20 @@ class SessionsController extends BaseController
             // Check if the user exists
             if (empty($user)) {
                 session()->flash('alert_error', trans('loginalert_user_not_found'));
-                redirect()->route('sessions/login');
+                return redirect()->route('sessions/login');
             } elseif ($user->user_active == 0) {
                 // Check if the user is marked as active (not implemented: Todo?)
                 session()->flash('alert_error', trans('loginalert_user_inactive'));
-                redirect()->route('sessions/login');
+                return redirect()->route('sessions/login');
             } elseif ($this->authenticate(request()->input('email'), request()->input('password'))) {
                 if (session()->get('user_type') == 1) {
-                    redirect()->route('dashboard');
+                    return redirect()->route('dashboard');
                 } elseif (session()->get('user_type') == 2) {
-                    redirect()->route('guest');
+                    return redirect()->route('guest');
                 }
             } else {
                 session()->flash('alert_error', trans('loginalert_credentials_incorrect'));
-                redirect()->route('sessions/login');
+                return redirect()->route('sessions/login');
             }
         }
 
@@ -104,7 +104,7 @@ class SessionsController extends BaseController
     public function logout()
     {
         session()->flush();
-        redirect()->route('sessions/login');
+        return redirect()->route('sessions/login');
     }
 
     /**
@@ -125,12 +125,12 @@ class SessionsController extends BaseController
         if ($token) {
             if (preg_match('/[^[:alnum:]\-_]/', $token)) {
                 Log::error('Incoming token is not alphanumeric ' . $token);
-                redirect()->route('/');
+                return redirect()->route('/');
             }
             //prevent brute force attacks by counting times a token is used
             $login_log_check = $this->loginLogCheck($token);
             if ( ! empty($login_log_check) && $login_log_check->log_count > 10) {
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             } else {
                 //the use of a token counts as a failure
                 $this->loginLogAddfailure($token);
@@ -141,7 +141,7 @@ class SessionsController extends BaseController
             if (empty($user)) {
                 // Redirect back to the login screen with an alert
                 session()->flash('alert_error', trans('wrong_passwordreset_token'));
-                redirect()->route('sessions/passwordreset');
+                return redirect()->route('sessions/passwordreset');
             } else {
                 //if token is valid, delete the failure attempt from
                 //the login_log table
@@ -157,17 +157,17 @@ class SessionsController extends BaseController
             $user_id      = request()->input('user_id', true);
             if (empty($user_id) || empty($new_password)) {
                 session()->flash('alert_error', trans('loginalert_no_password'));
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             }
             // Check for the reset token
             $user = (new UsersService())->getById($user_id);
             if (empty($user)) {
                 session()->flash('alert_error', trans('loginalert_user_not_found'));
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             }
             if (empty($user->user_passwordreset_token) || request()->input('token') !== $user->user_passwordreset_token) {
                 session()->flash('alert_error', trans('loginalert_wrong_auth_code'));
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             }
             // Call the save_change_password() function from users model
             (new UsersService())->saveChangePassword($user_id, $new_password);
@@ -179,23 +179,23 @@ class SessionsController extends BaseController
             $this->db->where('user_id', $user_id);
             $this->db->update('ip_users', $db_array);
             // Redirect back to the login form
-            redirect()->route('sessions/login');
+            return redirect()->route('sessions/login');
         }
         // Check if the password reset form was used
         if (request()->input('btn_reset', true)) {
             $email = request()->input('email', true);
             if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 Log::error('Incoming email is not a valid email address in passwordreset ' . $email);
-                redirect()->route('/');
+                return redirect()->route('/');
             }
             if (empty($email)) {
                 session()->flash('alert_error', trans('loginalert_user_not_found'));
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             }
             //prevent brute force attacks by counting password resets
             $login_log_check = $this->loginLogCheck($email);
             if ( ! empty($login_log_check) && $login_log_check->log_count > 10) {
-                redirect($_SERVER['HTTP_REFERER']);
+                return redirect($_SERVER['HTTP_REFERER']);
             } else {
                 //a password recovery attempt counts as failed login
                 $this->loginLogAddfailure($email);
@@ -206,7 +206,7 @@ class SessionsController extends BaseController
                 $email = request()->input('email', true);
                 if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     Log::error('Incoming email is not a valid email address in passwordreset ' . $email);
-                    redirect()->route('/');
+                    return redirect()->route('/');
                 }
                 //use salt to prevent predictability of the reset token (CVE-2021-29023)$token = md5(time() . $email . $this->crypt->salt());
                 // Save the token to the database and set the user to inactive
@@ -245,7 +245,7 @@ class SessionsController extends BaseController
                 } else {
                     session()->flash('alert_success', trans('email_successfully_sent'));
                 }
-                redirect()->route('sessions/login');
+                return redirect()->route('sessions/login');
             }
         }
 

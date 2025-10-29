@@ -136,6 +136,6 @@ class CustomValuesController extends AdminController
             session()->flash('alert_info', trans('id') . sprintf(' "%s" ', $id) . trans('custom_values_used_not_deletable'));
         }
         $fid = request()->input('custom_field_id');
-        redirect('custom_values' . ($fid ? '/field/' . $fid : ''));
+        return redirect('custom_values' . ($fid ? '/field/' . $fid : ''));
     }
 }

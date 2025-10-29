@@ -189,7 +189,7 @@ class UserClientGuestViewController extends BaseGuestController
     {
         (new QuotesService())->approveQuoteByKey($quote_url_key);
         email_quote_status((new QuotesService())->where('ip_quotes.quote_url_key', $quote_url_key)->get()->row()->quote_id, 'approved');
-        redirect('guest/view/quote/' . $quote_url_key);
+        return redirect('guest/view/quote/' . $quote_url_key);
     }
 
     /**
@@ -201,7 +201,7 @@ class UserClientGuestViewController extends BaseGuestController
     {
         (new QuotesService())->rejectQuoteByKey($quote_url_key);
         email_quote_status((new QuotesService())->where('ip_quotes.quote_url_key', $quote_url_key)->get()->row()->quote_id, 'rejected');
-        redirect('guest/view/quote/' . $quote_url_key);
+        return redirect('guest/view/quote/' . $quote_url_key);
     }
 
     /**

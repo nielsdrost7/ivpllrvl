@@ -35,7 +35,7 @@ class InvoicesControllerUserClient extends BaseGuestController
     public function index(): void
     {
         // Display open invoices by default
-        redirect()->route('guest/invoices/status/open');
+        return redirect()->route('guest/invoices/status/open');
     }
 
     /**

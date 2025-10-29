@@ -53,7 +53,7 @@ class EmailTemplatesController extends AdminController
     public function form($id = null)
     {
         if (request()->input('btn_cancel')) {
-            redirect()->route('email_templates');
+            return redirect()->route('email_templates');
         }
         $this->filterInput();
         // <<<--- filters _POST array for nastiness
@@ -61,12 +61,12 @@ class EmailTemplatesController extends AdminController
             $check = $this->db->get_where('ip_email_templates', ['email_template_title' => request()->input('email_template_title')])->result();
             if ( ! empty($check)) {
                 session()->flash('alert_error', trans('email_template_already_exists'));
-                redirect()->route('email_templates/form');
+                return redirect()->route('email_templates/form');
             }
         }
         if ((new EmailTemplatesService())->runValidation()) {
             (new EmailTemplatesService())->save($id);
-            redirect()->route('email_templates');
+            return redirect()->route('email_templates');
         }
         if ($id && ! request()->input('btn_submit')) {
             if ( ! (new EmailTemplatesService())->prepForm($id)) {
@@ -91,6 +91,6 @@ class EmailTemplatesController extends AdminController
     public function delete($id)
     {
         (new EmailTemplatesService())->delete($id);
-        redirect()->route('email_templates');
+        return redirect()->route('email_templates');
     }
 }

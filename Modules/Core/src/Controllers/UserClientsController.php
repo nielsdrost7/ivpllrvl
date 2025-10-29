@@ -25,7 +25,7 @@ class UserClientsController extends AdminController
      */
     public function index()
     {
-        redirect()->route('users');
+        return redirect()->route('users');
     }
 
     /**
@@ -36,11 +36,11 @@ class UserClientsController extends AdminController
     public function user($id = null)
     {
         if (request()->input('btn_cancel')) {
-            redirect()->route('users');
+            return redirect()->route('users');
         }
         $user = (new UsersService())->getById($id);
         if (empty($user)) {
-            redirect()->route('users');
+            return redirect()->route('users');
         }
         $user_clients = (new UserClientsService())->assignedTo($id)->get()->result();
 
@@ -58,9 +58,9 @@ class UserClientsController extends AdminController
     public function create($user_id = null)
     {
         if ( ! $user_id) {
-            redirect()->route('custom_values');
+            return redirect()->route('custom_values');
         } elseif (request()->input('btn_cancel')) {
-            redirect('user_clients/field/' . $user_id);
+            return redirect('user_clients/field/' . $user_id);
         }
         if ((new UserClientsService())->runValidation()) {
             if (request()->input('user_all_clients')) {
@@ -73,7 +73,7 @@ class UserClientsController extends AdminController
             }
             $this->db->where('user_id', $user_id);
             $this->db->update('ip_users', $user_update);
-            redirect('user_clients/user/' . $user_id);
+            return redirect('user_clients/user/' . $user_id);
         }
         $user    = (new UsersService())->getById($user_id);
         $clients = (new ClientsService())->getNotAssignedToUser($user_id);
@@ -92,6 +92,6 @@ class UserClientsController extends AdminController
     {
         $ref = (new UserClientsService())->getById($user_client_id);
         (new UserClientsService())->delete($user_client_id);
-        redirect('user_clients/user/' . $ref->user_id);
+        return redirect('user_clients/user/' . $ref->user_id);
     }
 }

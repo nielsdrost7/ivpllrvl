@@ -25,7 +25,7 @@ class CustomFieldsController extends AdminController
     public function index(): void
     {
         // Display all custom_fields tables by default
-        redirect()->route('custom_fields/table/all');
+        return redirect()->route('custom_fields/table/all');
     }
 
     /**
@@ -58,13 +58,13 @@ class CustomFieldsController extends AdminController
     public function form($id = null)
     {
         if (request()->input('btn_cancel')) {
-            redirect()->route('custom_fields');
+            return redirect()->route('custom_fields');
         }
         $this->filterInput();
         // <<<--- filters _POST array for nastiness
         if ((new CustomFieldsService())->runValidation()) {
             (new CustomFieldsService())->save($id);
-            redirect()->route('custom_fields');
+            return redirect()->route('custom_fields');
         }
         if ($id && ! request()->input('btn_submit') && ! (new CustomFieldsService())->prepForm($id)) {
             abort(404);
@@ -87,6 +87,6 @@ class CustomFieldsController extends AdminController
         }
         // Return to page number of custom values or fields
         $r = empty($_SERVER['HTTP_REFERER']) ? 'custom_fields' : $_SERVER['HTTP_REFERER'];
-        redirect($r);
+        return redirect($r);
     }
 }
