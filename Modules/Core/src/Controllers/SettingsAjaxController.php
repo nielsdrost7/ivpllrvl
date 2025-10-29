@@ -17,8 +17,6 @@ class SettingsAjaxController extends AdminController
      * @originalFile AjaxController.php
      */
     public function getCronKey()
-    {
-        $this->load->helper('string');
-        echo random_string('alnum', 16);
+    {echo random_string('alnum', 16);
     }
 }

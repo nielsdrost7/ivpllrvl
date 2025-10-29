@@ -100,9 +100,7 @@ class QuotesControllerUserClient extends BaseGuestController
         if ( ! $quote) {
             abort(404);
         }
-        (new QuotesService())->markViewed($quote->quote_id);
-        $this->load->helper('dropzone');
-        $this->layout->set(['quote_id' => $quote_id, 'quote' => $quote, 'items' => (new QuoteItemsService())->getByQuoteId($quote_id), 'quote_tax_rates' => (new QuoteTaxRatesService())->getByQuoteId($quote_id), 'legacy_calculation' => config_item('legacy_calculation')]);
+        (new QuotesService())->markViewed($quote->quote_id);$this->layout->set(['quote_id' => $quote_id, 'quote' => $quote, 'items' => (new QuoteItemsService())->getByQuoteId($quote_id), 'quote_tax_rates' => (new QuoteTaxRatesService())->getByQuoteId($quote_id), 'legacy_calculation' => config_item('legacy_calculation')]);
         $this->layout->buffer('content', 'guest/quotes_view');
         $this->layout->render('layout_guest');
     }
@@ -118,9 +116,7 @@ class QuotesControllerUserClient extends BaseGuestController
      * @param string|null $quote_template optional template identifier to use when generating the PDF
      */
     public function generatePdf($quote_id, $stream = true, $quote_template = null)
-    {
-        $this->load->helper('pdf');
-        (new QuotesService())->markViewed($quote_id);
+    {(new QuotesService())->markViewed($quote_id);
         $quote = (new QuotesService())->guestVisible()->where('ip_quotes.quote_id', $quote_id)->where_in('ip_quotes.client_id', $this->user_clients)->get()->row();
         if ( ! $quote) {
             abort(404);

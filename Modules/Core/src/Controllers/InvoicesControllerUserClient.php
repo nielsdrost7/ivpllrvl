@@ -87,9 +87,7 @@ class InvoicesControllerUserClient extends BaseGuestController
         if ( ! $invoice) {
             abort(404);
         }
-        (new InvoicesService())->markViewed($invoice->invoice_id);
-        $this->load->helper('dropzone');
-        $this->layout->set(['invoice_id' => $invoice_id, 'invoice' => $invoice, 'items' => (new ItemsService())->getByInvoiceId($invoice_id), 'invoice_tax_rates' => (new InvoiceTaxRatesService())->getByInvoiceId($invoice_id), 'enable_online_payments' => get_setting('enable_online_payments'), 'legacy_calculation' => config_item('legacy_calculation')]);
+        (new InvoicesService())->markViewed($invoice->invoice_id);$this->layout->set(['invoice_id' => $invoice_id, 'invoice' => $invoice, 'items' => (new ItemsService())->getByInvoiceId($invoice_id), 'invoice_tax_rates' => (new InvoiceTaxRatesService())->getByInvoiceId($invoice_id), 'enable_online_payments' => get_setting('enable_online_payments'), 'legacy_calculation' => config_item('legacy_calculation')]);
         $this->layout->buffer('content', 'guest/invoices_view');
         $this->layout->render('layout_guest');
     }
@@ -105,9 +103,7 @@ class InvoicesControllerUserClient extends BaseGuestController
         if ( ! $invoice) {
             abort(404);
         }
-        (new InvoicesService())->markViewed($invoice_id);
-        $this->load->helper('pdf');
-        generate_invoice_pdf($invoice_id, $stream, $invoice_template, true);
+        (new InvoicesService())->markViewed($invoice_id);generate_invoice_pdf($invoice_id, $stream, $invoice_template, true);
     }
 
     /**
@@ -127,8 +123,6 @@ class InvoicesControllerUserClient extends BaseGuestController
         if ( ! $invoice) {
             abort(404);
         }
-        (new InvoicesService())->markViewed($invoice_id);
-        $this->load->helper('pdf');
-        generate_invoice_sumex($invoice_id, $stream, $invoice_template, true);
+        (new InvoicesService())->markViewed($invoice_id);generate_invoice_sumex($invoice_id, $stream, $invoice_template, true);
     }
 }

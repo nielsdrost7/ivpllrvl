@@ -111,9 +111,7 @@ class SettingsService extends BaseService
      * @originalFile Setting.php
      */
     public function getThemes()
-    {
-        $this->load->helper('directory');
-        $found_folders = directory_map(THEME_FOLDER, 1);
+    {$found_folders = directory_map(THEME_FOLDER, 1);
         $themes        = [];
         foreach ($found_folders as $theme) {
             if ($theme == 'core') {

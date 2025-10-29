@@ -138,10 +138,7 @@ class MyModel
      * @originalFile MyModel.php
      */
     public function paginate($base_url, $offset = 0, $uri_segment = 3)
-    {
-        $this->load->helper('url');
-        $this->load->library('pagination');
-        $this->offset       = $offset;
+    {$this->offset       = $offset;
         $default_list_limit = $this->mdl_settings->setting('default_list_limit');
         $per_page           = empty($default_list_limit) ? $this->default_limit : $default_list_limit;
         $this->setDefaults();
@@ -218,7 +215,7 @@ class MyModel
     {
         $db_array         = [];
         $validation_rules = $this->{$this->validation_rules}();
-        foreach ($this->input->post() as $key => $value) {
+        foreach (request()->input() as $key => $value) {
             if (array_key_exists($key, $validation_rules)) {
                 $db_array[$key] = $value;
             }
@@ -333,12 +330,10 @@ class MyModel
             $validation_rules = $this->default_validation_rules;
         }
         foreach (array_keys($_POST) as $key) {
-            $this->form_values[$key] = $this->input->post($key);
+            $this->form_values[$key] = request()->input($key);
         }
         if (method_exists($this, $validation_rules)) {
-            $this->validation_rules = $validation_rules;
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules($this->{$validation_rules}());
+            $this->validation_rules = $validation_rules;$this->form_validation->set_rules($this->{$validation_rules}());
             $run                     = $this->form_validation->run();
             $this->validation_errors = validation_errors();
 

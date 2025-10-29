@@ -86,12 +86,8 @@ class UserClientGuestViewController extends BaseGuestController
         $invoice = (new InvoicesService())->guestVisible()->where('invoice_url_key', $invoice_url_key)->get();
         if ($invoice->numRows() == 1) {
             $invoice = $invoice->row();
-            if ( ! $invoice_template) {
-                $this->load->helper('template');
-                $invoice_template = select_pdf_invoice_template($invoice);
-            }
-            $this->load->helper('pdf');
-            generate_invoice_pdf($invoice->invoice_id, $stream, $invoice_template, 1);
+            if ( ! $invoice_template) {$invoice_template = select_pdf_invoice_template($invoice);
+            }generate_invoice_pdf($invoice->invoice_id, $stream, $invoice_template, 1);
         }
     }
 
@@ -117,9 +113,7 @@ class UserClientGuestViewController extends BaseGuestController
             }
             if ( ! $invoice_template) {
                 $invoice_template = get_setting('pdf_invoice_template');
-            }
-            $this->load->helper('pdf');
-            generate_invoice_sumex($invoice->invoice_id);
+            }generate_invoice_sumex($invoice->invoice_id);
         }
     }
 
@@ -183,9 +177,7 @@ class UserClientGuestViewController extends BaseGuestController
         }
         if ( ! $quote_template) {
             $quote_template = get_setting('pdf_quote_template');
-        }
-        $this->load->helper('pdf');
-        generate_quote_pdf($quote->quote_id, $stream, $quote_template);
+        }generate_quote_pdf($quote->quote_id, $stream, $quote_template);
     }
 
     /**

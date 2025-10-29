@@ -97,10 +97,7 @@ class ClientCustomsService extends BaseService
     public function prepForm($id = null)
     {
         if ($id) {
-            $values = $this->getByClient($id);
-            $this->load->helper('custom_values_helper');
-            $this->load->module('custom_fields/mdl_custom_fields');
-            if ($values != null) {
+            $values = $this->getByClient($id);if ($values != null) {
                 foreach ($values as $value) {
                     $type = $value->custom_field_type;
                     if ($type != null) {
@@ -164,9 +161,7 @@ class ClientCustomsService extends BaseService
      */
     public function dbArray()
     {
-        $db_array = parent::dbArray();
-        $this->load->module('custom_fields/mdl_custom_fields');
-        $fields = $this->mdl_custom_fields->result();
+        $db_array = parent::dbArray();$fields = $this->mdl_custom_fields->result();
         foreach ($fields as $field) {
             if ($field->custom_field_type == 'DATE') {
                 $db_array[$field->custom_field_column] = date_to_mysql($db_array[$field->custom_field_column]);
