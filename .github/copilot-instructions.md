@@ -27,6 +27,22 @@ This application is a Laravel application and its main Laravel ecosystem package
 - alpinejs (ALPINEJS) - v3
 - tailwindcss (TAILWINDCSS) - v3
 
+## Development Environment
+
+Understanding the development environment helps you provide better assistance:
+
+- **Local Development**: Uses Laravel Vite for asset bundling (`npm run dev` or `composer run dev`)
+- **Database**: Supports multiple databases via Laravel's database abstraction
+- **Code Quality Tools**:
+  - Laravel Pint (PHP-CS-Fixer wrapper) - Code formatting (`vendor/bin/pint`)
+  - PHPStan/Larastan - Static analysis (`composer phpstan`)
+  - Rector - Automated refactoring and upgrades (`rector/rector`)
+- **Testing**: PHPUnit for unit and feature tests (`php artisan test`)
+- **Asset Pipeline**: Vite with support for modern JavaScript and CSS
+- **Module System**: nwidart/laravel-modules for organizing code into independent modules
+- **Admin Panel**: Filament v4 provides rich admin interface
+- **MCP Server**: Laravel Boost provides development tools via Model Context Protocol
+
 ## Conventions
 
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -54,9 +70,21 @@ This application is a Laravel application and its main Laravel ecosystem package
 
 - You must only create documentation files if explicitly requested by the user.
 
-## Laravel Boost
+## Laravel Boost MCP Server
 
-- Laravel Boost is an MCP server that comes with powerful tools designed specifically for this application. Use them.
+This application is configured to work with Laravel Boost, a Model Context Protocol (MCP) server that provides powerful development tools:
+
+- **Laravel Boost is an MCP server** - It extends Copilot with Laravel-specific capabilities
+- **Always use available MCP tools** - They're designed specifically for this application's needs
+- **Available Laravel Boost tools include**:
+  - `list-artisan-commands` - Get available Artisan commands with their parameters
+  - `get-absolute-url` - Get properly formatted URLs with correct scheme, domain, and port
+  - `tinker` - Execute PHP code to debug or query Eloquent models directly
+  - `database-query` - Read from the database using SQL queries
+  - `browser-logs` - Read browser console logs, errors, and exceptions
+  - `search-docs` - Search version-specific Laravel ecosystem documentation
+- **MCP servers enhance the development environment** - They provide context-aware assistance that standard tools cannot
+- **Prefer MCP tools over manual approaches** - For example, use `search-docs` before googling, use `tinker` before writing test scripts
 
 ## Artisan
 
