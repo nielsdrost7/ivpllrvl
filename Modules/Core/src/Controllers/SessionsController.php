@@ -103,7 +103,7 @@ class SessionsController extends BaseController
      */
     public function logout()
     {
-        $this->session->sess_destroy();
+        session()->flush();
         redirect()->route('sessions/login');
     }
 
