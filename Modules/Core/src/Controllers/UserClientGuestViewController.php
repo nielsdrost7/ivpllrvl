@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Session;
 use Modules\Core\Controllers\UserClientGuestController as BaseGuestController;
 use Modules\Core\Services\CustomFieldsService;
 
-use function Modules\Guest\Controllers\show_404;
-
 use Modules\Invoices\Services\InvoicesService;
 use Modules\Invoices\Services\InvoiceTaxRatesService;
 use Modules\Invoices\Services\ItemsService;
@@ -115,7 +113,7 @@ class UserClientGuestViewController extends BaseGuestController
         if ($invoice->numRows() == 1) {
             $invoice = $invoice->row();
             if ($invoice->sumex_id == null) {
-                show_404();
+                abort(404);
             }
             if ( ! $invoice_template) {
                 $invoice_template = get_setting('pdf_invoice_template');
@@ -181,7 +179,7 @@ class UserClientGuestViewController extends BaseGuestController
     {
         $quote = (new QuotesService())->guestVisible()->where('quote_url_key', $quote_url_key)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
         if ( ! $quote_template) {
             $quote_template = get_setting('pdf_quote_template');

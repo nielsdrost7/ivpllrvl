@@ -9,7 +9,6 @@ use function Modules\Guest\Controllers\config_item;
 
 use Modules\Guest\Controllers\InvoicesService;
 
-use function Modules\Guest\Controllers\show_404;
 use function Modules\Guest\Controllers\site_url;
 
 use Modules\Invoices\Services\InvoiceTaxRatesService;
@@ -86,7 +85,7 @@ class InvoicesControllerUserClient extends BaseGuestController
     {
         $invoice = (new InvoicesService())->where('ip_invoices.invoice_id', $invoice_id)->where_in('ip_invoices.client_id', $this->user_clients)->get()->row();
         if ( ! $invoice) {
-            show_404();
+            abort(404);
         }
         (new InvoicesService())->markViewed($invoice->invoice_id);
         $this->load->helper('dropzone');
@@ -104,7 +103,7 @@ class InvoicesControllerUserClient extends BaseGuestController
     {
         $invoice = (new InvoicesService())->guestVisible()->where('ip_invoices.invoice_id', $invoice_id)->where_in('ip_invoices.client_id', $this->user_clients)->get()->row();
         if ( ! $invoice) {
-            show_404();
+            abort(404);
         }
         (new InvoicesService())->markViewed($invoice_id);
         $this->load->helper('pdf');
@@ -126,7 +125,7 @@ class InvoicesControllerUserClient extends BaseGuestController
     {
         $invoice = (new InvoicesService())->guestVisible()->where('ip_invoices.invoice_id', $invoice_id)->where_in('ip_invoices.client_id', $this->user_clients)->get()->row();
         if ( ! $invoice) {
-            show_404();
+            abort(404);
         }
         (new InvoicesService())->markViewed($invoice_id);
         $this->load->helper('pdf');

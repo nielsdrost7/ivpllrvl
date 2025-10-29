@@ -9,7 +9,6 @@ use function Modules\Guest\Controllers\config_item;
 
 use Modules\Guest\Controllers\QuotesService;
 
-use function Modules\Guest\Controllers\show_404;
 use function Modules\Guest\Controllers\site_url;
 
 use Modules\Quotes\Services\QuoteItemsService;
@@ -99,7 +98,7 @@ class QuotesControllerUserClient extends BaseGuestController
         // Sets the current URL in the session to force redirect_to()
         $quote = (new QuotesService())->guestVisible()->where('ip_quotes.quote_id', $quote_id)->where_in('ip_quotes.client_id', $this->user_clients)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
         (new QuotesService())->markViewed($quote->quote_id);
         $this->load->helper('dropzone');
@@ -124,7 +123,7 @@ class QuotesControllerUserClient extends BaseGuestController
         (new QuotesService())->markViewed($quote_id);
         $quote = (new QuotesService())->guestVisible()->where('ip_quotes.quote_id', $quote_id)->where_in('ip_quotes.client_id', $this->user_clients)->get()->row();
         if ( ! $quote) {
-            show_404();
+            abort(404);
         }
         generate_quote_pdf($quote_id, $stream, $quote_template);
     }

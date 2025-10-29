@@ -70,7 +70,7 @@ class EmailTemplatesController extends AdminController
         }
         if ($id && ! $this->input->post('btn_submit')) {
             if ( ! (new EmailTemplatesService())->prepForm($id)) {
-                show_404();
+                abort(404);
             }
             (new EmailTemplatesService())->setFormValue('is_update', true);
         }
